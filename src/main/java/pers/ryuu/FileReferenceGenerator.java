@@ -12,11 +12,18 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class FileReferenceGenerator {
-
-    private static final ArrayList<String> fileContent = new ArrayList<>(1 << 8);
+    private static final ArrayList<String> fileContent = new ArrayList<>(1 << 10);
     private static String assetPath;
     private static String destinationPath;
     private static int lineIndex = 0;
+
+    /**
+     * 生成指定资源文件夹中所有文件的相对路径字符串的字符串字段引用
+     * 生成类的层级结构与文件夹一致
+     *
+     * @param assetPath       资源文件夹的绝对路径
+     * @param destinationPath 生成类的目标文件夹绝对路径
+     */
 
     public static void generate(String assetPath, String destinationPath) {
         FileReferenceGenerator.assetPath = dealInputFolderPath(assetPath);
