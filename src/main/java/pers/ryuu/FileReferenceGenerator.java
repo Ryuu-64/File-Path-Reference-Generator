@@ -76,7 +76,7 @@ public class FileReferenceGenerator {
     }
 
     private static String getPackageName(String destinationPath) {
-        String packageStartPath = "\\src\\main\\java\\";
+        String packageStartPath = "\\src\\";
         int srcIndex = destinationPath.indexOf(packageStartPath);
         String packageName = destinationPath.substring(srcIndex);
         packageName = packageName.replace(packageStartPath, "");
