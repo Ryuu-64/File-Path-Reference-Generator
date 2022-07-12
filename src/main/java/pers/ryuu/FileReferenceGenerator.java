@@ -5,9 +5,6 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -24,7 +21,6 @@ public class FileReferenceGenerator {
      * @param assetPath       资源文件夹的绝对路径
      * @param destinationPath 生成类的目标文件夹绝对路径
      */
-
     public static void generate(String assetPath, String destinationPath) {
         FileReferenceGenerator.assetPath = dealInputFolderPath(assetPath);
         FileReferenceGenerator.destinationPath = dealInputFolderPath(destinationPath);
@@ -51,18 +47,13 @@ public class FileReferenceGenerator {
             String relativeFilePath = getRelativeFilePath(filePath, assetPath);
             File[] files = file.listFiles();
             assert files != null;
-            List<String> nameList = Arrays.asList(Objects.requireNonNull(file.list()));
-            if (!nameList.contains("ignoreFolder")) {
-                addLine("public static final String " + file.getName() + "_folder = \"" + relativeFilePath + "/\";");
-                addLine("");
+            addLine("public static final String " + file.getName() + "_folder = \"" + relativeFilePath + "/\";");
+            addLine("");
+            addLine("public static class " + file.getName() + "{");
+            for (File childFile : files) {
+                write(childFile);
             }
-            if (!nameList.contains("ignoreFile")) {
-                addLine("public static class " + file.getName() + "{");
-                for (File childFile : files) {
-                    write(childFile);
-                }
-                addLine("}");
-            }
+            addLine("}");
         } else {
             String relativeFilePath = getRelativeFilePath(file.getPath(), assetPath);
             String relativeFilePathReference = getRelativeFilePathReference(file.getName(), assetPath);
