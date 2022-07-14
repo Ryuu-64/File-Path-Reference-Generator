@@ -1,50 +1,60 @@
 package pers.ryuu;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class FileReferenceGenerator {
-    private static final ArrayList<String> fileContent = new ArrayList<>(1 << 10);
-    private static String assetPath;
+    public static void main(String[] args) {
+        generate("E:\\LibgdxWorkSpace\\Air-Hockey\\assets", "E:\\LibgdxWorkSpace\\Air-Hockey\\core\\src\\com\\coolstudios\\airhockey");
+    }
+
+    private static final ArrayList<String> fileReferenceContent = new ArrayList<>(1 << 10);
+    private static final ArrayList<String> ignoreFiles = new ArrayList<>(1 << 5);
+    private static String rootPath;
     private static String destinationPath;
     private static int lineIndex = 0;
 
     /**
-     * ç”ŸæˆæŒ‡å®šèµ„æºæ–‡ä»¶å¤¹ä¸­æ‰€æœ‰æ–‡ä»¶çš„ç›¸å¯¹è·¯å¾„å­—ç¬¦ä¸²çš„å­—ç¬¦ä¸²å­—æ®µå¼•ç”¨
-     * ç”Ÿæˆç±»çš„å±‚çº§ç»“æž„ä¸Žæ–‡ä»¶å¤¹ä¸€è‡´
+     * Éú³ÉÖ¸¶¨×ÊÔ´ÎÄ¼þ¼ÐÖÐËùÓÐÎÄ¼þµÄÏà¶ÔÂ·¾¶×Ö·û´®µÄ×Ö·û´®×Ö¶ÎÒýÓÃ
+     * Éú³ÉÀàµÄ²ã¼¶½á¹¹ÓëÎÄ¼þ¼ÐÒ»ÖÂ
      *
-     * @param assetPath       èµ„æºæ–‡ä»¶å¤¹çš„ç»å¯¹è·¯å¾„
-     * @param destinationPath ç”Ÿæˆç±»çš„ç›®æ ‡æ–‡ä»¶å¤¹ç»å¯¹è·¯å¾„
+     * @param assetPath       ×ÊÔ´ÎÄ¼þ¼ÐµÄ¾ø¶ÔÂ·¾¶
+     * @param destinationPath Éú³ÉÀàµÄÄ¿±êÎÄ¼þ¼Ð¾ø¶ÔÂ·¾¶
      */
     public static void generate(String assetPath, String destinationPath) {
-        FileReferenceGenerator.assetPath = dealInputFolderPath(assetPath);
+        FileReferenceGenerator.rootPath = dealInputFolderPath(assetPath);
         FileReferenceGenerator.destinationPath = dealInputFolderPath(destinationPath);
 
         addLine("package " + getPackageName(FileReferenceGenerator.destinationPath) + ";");
         addLine("");
         addLine("public class FileReference {");
-        File file = new File(FileReferenceGenerator.assetPath);
-        File[] files = file.listFiles();
+        File rootFile = new File(FileReferenceGenerator.rootPath);
+        File[] files = rootFile.listFiles();
         if (files == null) {
-            throw new IllegalArgumentException("unable to get asset file: " + FileReferenceGenerator.assetPath);
+            throw new IllegalArgumentException("unable to get root file: " + FileReferenceGenerator.rootPath);
         }
-        for (File childFile : files) {
-            write(childFile);
+        for (File file : files) {
+            if (file.getName().equals(".fileignore")) {
+                readFileIgnore(file);
+            }
+            write(file);
         }
         addLine("}");
         addLine("");
-        writeAssetReference();
+        writeFileReference();
     }
 
     private static void write(File file) {
+        String relativeFilePath = getRelativeFilePath(file.getPath(), rootPath);
+        for (String ignoreFile : ignoreFiles) {
+            if (relativeFilePath.contains(ignoreFile)) {
+                return;
+            }
+        }
         if (file.isDirectory()) {
-            String filePath = file.getPath();
-            String relativeFilePath = getRelativeFilePath(filePath, assetPath);
             File[] files = file.listFiles();
             assert files != null;
             addLine("public static final String " + file.getName() + "_folder = \"" + relativeFilePath + "/\";");
@@ -55,14 +65,13 @@ public class FileReferenceGenerator {
             }
             addLine("}");
         } else {
-            String relativeFilePath = getRelativeFilePath(file.getPath(), assetPath);
-            String relativeFilePathReference = getRelativeFilePathReference(file.getName(), assetPath);
+            String relativeFilePathReference = getRelativeFilePathReference(file.getName(), rootPath);
             addLine("public static final String " + relativeFilePathReference + " = \"" + relativeFilePath + "\";");
         }
     }
 
     private static void addLine(String newLine) {
-        fileContent.add(lineIndex, newLine);
+        fileReferenceContent.add(lineIndex, newLine);
         lineIndex++;
     }
 
@@ -94,10 +103,10 @@ public class FileReferenceGenerator {
         return dealStartWithNumber(path);
     }
 
-    private static void writeAssetReference() {
+    private static void writeFileReference() {
         try (FileWriter fileWriter = new FileWriter(destinationPath + "/FileReference.java")) {
             try (BufferedWriter bufferedWriter = new BufferedWriter(fileWriter)) {
-                for (String line : fileContent) {
+                for (String line : fileReferenceContent) {
                     bufferedWriter.write(line);
                     bufferedWriter.newLine();
                 }
@@ -123,6 +132,17 @@ public class FileReferenceGenerator {
             return "$" + fileName;
         } else {
             return fileName;
+        }
+    }
+
+    private static void readFileIgnore(File file) {
+        try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(Files.newInputStream(file.toPath())))) {
+            String line;
+            while ((line = bufferedReader.readLine()) != null) {
+                ignoreFiles.add(line);
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 }
