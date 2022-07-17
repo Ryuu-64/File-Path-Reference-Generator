@@ -10,18 +10,15 @@ public class FileReferenceGenerator {
     // TODO update readme
     // TODO .fileignore regex
     public static void main(String[] args) {
-        generate(
-                "E:\\LibgdxWorkSpace\\Air-Hockey\\assets",
-                "E:\\LibgdxWorkSpace\\Air-Hockey\\core\\src\\com\\coolstudios\\airhockey",
-                "com.coolstudios.airhockey"
-        );
+        generate("C:\\Users\\Ryuu\\Documents\\LibGdxWorkSpace.2022.7.15\\Air-Hockey\\assets", "C:\\Users\\Ryuu\\Documents\\LibGdxWorkSpace.2022.7.15\\Air-Hockey\\core\\src\\com\\coolstudios\\airhockey", "com.coolstudios.airhockey");
     }
 
     private static final ArrayList<String> fileReferenceContent = new ArrayList<>(1 << 10);
-    private static final ArrayList<String> ignoreFiles = new ArrayList<>(1 << 5);
+    private static final ArrayList<String> ignorePatterns = new ArrayList<>(1 << 5);
+    private static final ArrayList<String> notIgnorePatterns = new ArrayList<>(1 << 5);
     private static String filePath;
     private static String writePath;
-    private static int lineIndex = 0;
+    private static int lineIndex = -1;
 
     public static void generate(String filePath, String writePath, String packageName) {
         FileReferenceGenerator.filePath = dealInputFolderPath(filePath);
@@ -34,9 +31,11 @@ public class FileReferenceGenerator {
         if (files == null) {
             throw new IllegalArgumentException("unable to get root file: " + FileReferenceGenerator.filePath);
         }
+
         for (File file : files) {
             if (file.getName().equals(".fileignore")) {
                 readFileIgnore(file);
+                continue;
             }
             write(file);
         }
@@ -46,37 +45,73 @@ public class FileReferenceGenerator {
     }
 
     private static void write(File file) {
-        String relativeFilePath = getRelativeFilePath(file.getPath(), filePath);
-        for (String ignoreFile : ignoreFiles) {
-            if (relativeFilePath.contains(ignoreFile)) {
-                return;
-            }
-        }
+        String relativeFilePath = getRelativeFilePath(file, filePath);
+        boolean isIgnore = isIgnore(relativeFilePath);
         if (file.isDirectory()) {
             File[] files = file.listFiles();
             assert files != null;
-            addLine("public static final String " + file.getName() + "_folder = \"" + relativeFilePath + "/\";");
-            addLine("");
-            addLine("public static class " + file.getName() + "{");
-            // TODO calculate write childFile count
+            if (!isIgnore) {
+                String folderString = "public static final String " + file.getName() + "_folder = \"" + relativeFilePath + "\";";
+                addLine(folderString);
+                addLine("");
+            }
+            String classString = "public static class " + file.getName() + "{";
+            addLine(classString);
             for (File childFile : files) {
                 write(childFile);
             }
             addLine("}");
+            if (fileReferenceContent.get(lineIndex - 1).equals(classString) && fileReferenceContent.get(lineIndex).equals("}")) {
+                removeLine();
+                removeLine();
+            }
         } else {
-            addLine("public static final String " + getFileFieldName(file.getName()) + " = \"" + relativeFilePath + "\";");
+            if (!isIgnore) {
+                addLine("public static final String " + getFileFieldName(file.getName()) + " = \"" + relativeFilePath + "\";");
+            }
         }
+
+    }
+
+    private static boolean isIgnore(String path) {
+        boolean isIgnore = false;
+        for (String pattern : ignorePatterns) {
+            if (Pattern.matches(pattern, path)) {
+                isIgnore = true;
+            }
+        }
+
+        if (isIgnore) {
+            for (String pattern : notIgnorePatterns) {
+                if (Pattern.matches(pattern, path)) {
+                    isIgnore = false;
+                    break;
+                }
+            }
+        }
+        return isIgnore;
     }
 
     private static void addLine(String newLine) {
-        fileReferenceContent.add(lineIndex, newLine);
         lineIndex++;
+        fileReferenceContent.add(lineIndex, newLine);
     }
 
-    private static String getRelativeFilePath(String path, String prefix) {
+    private static void removeLine() {
+        fileReferenceContent.remove(lineIndex);
+        lineIndex--;
+    }
+
+    private static String getRelativeFilePath(File file, String prefix) {
+        String path = file.getPath();
         path = path.replace(prefix, "");
         path = path.replace('\\', '/');
-        return dealStartWithNumber(path);
+        if (file.isDirectory()) {
+            path = path + "/";
+        } else {
+            path = dealWithIllegalFieldName(path);
+        }
+        return path;
     }
 
     private static String getFileFieldName(String path) {
@@ -85,7 +120,8 @@ public class FileReferenceGenerator {
         path = path.replace('.', '_');
         path = path.replace('/', '_');
         path = path.replace('\\', '_');
-        return dealStartWithNumber(path);
+        path = dealWithIllegalFieldName(path);
+        return path;
     }
 
     private static void writeFileReference() {
@@ -110,7 +146,7 @@ public class FileReferenceGenerator {
         return path;
     }
 
-    private static String dealStartWithNumber(String fileName) {
+    private static String dealWithIllegalFieldName(String fileName) {
         Pattern startWithNumberPattern = Pattern.compile("\\d");
         Matcher matcher = startWithNumberPattern.matcher(fileName.charAt(0) + "");
         if (matcher.matches()) {
@@ -127,7 +163,21 @@ public class FileReferenceGenerator {
                 if (line.equals("")) {
                     continue;
                 }
-                ignoreFiles.add(line);
+
+                if (line.startsWith("!")) {
+                    line = line.replaceFirst("!", "");
+                    if (line.contains("*")) {
+                        line = line.replace("*", ".*");
+                    }
+                    line = ".*" + line;
+                    notIgnorePatterns.add(line);
+                } else {
+                    if (line.contains("*")) {
+                        line = line.replace("*", ".*");
+                    }
+                    line = ".*" + line;
+                    ignorePatterns.add(line);
+                }
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
