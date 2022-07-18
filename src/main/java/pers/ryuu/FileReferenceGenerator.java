@@ -10,7 +10,7 @@ public class FileReferenceGenerator {
     // TODO update readme
     // TODO .fileignore regex
     public static void main(String[] args) {
-        generate("C:\\Users\\Ryuu\\Documents\\LibGdxWorkSpace.2022.7.15\\Air-Hockey\\assets", "C:\\Users\\Ryuu\\Documents\\LibGdxWorkSpace.2022.7.15\\Air-Hockey\\core\\src\\com\\coolstudios\\airhockey", "com.coolstudios.airhockey");
+        generate("E:\\LibGdxWorkSpace\\Air-Hockey\\assets", "E:\\LibGdxWorkSpace\\Air-Hockey\\core\\src\\com\\coolstudios\\airhockey", "com.coolstudios.airhockey");
     }
 
     private static final ArrayList<String> fileReferenceContent = new ArrayList<>(1 << 10);

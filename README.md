@@ -48,7 +48,10 @@ FileReferenceGenerator.generate(
 
 ### 更新计划
 
-#### 忽略功能
+创建 .fileignore 文件
 
-创建 .fileignore 文件，完成文件及文件夹忽略功能
+完成文件及文件夹忽略功能
+
+.fileignore 文件注释功能
+
 添加不合法字段匹配功能
