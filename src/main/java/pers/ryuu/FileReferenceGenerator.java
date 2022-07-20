@@ -61,6 +61,8 @@ public class FileReferenceGenerator {
                 write(childFile);
             }
             addLine("}");
+
+            // if the static class contains no field
             if (fileReferenceContent.get(lineIndex - 1).equals(classString) && fileReferenceContent.get(lineIndex).equals("}")) {
                 removeLine();
                 removeLine();
@@ -160,7 +162,7 @@ public class FileReferenceGenerator {
         try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(Files.newInputStream(file.toPath())))) {
             String line;
             while ((line = bufferedReader.readLine()) != null) {
-                if (line.equals("")) {
+                if (line.equals("") || line.startsWith("#")) {
                     continue;
                 }
 
