@@ -3,7 +3,6 @@ package pers.ryuu;
 import java.io.*;
 import java.nio.file.Files;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -14,24 +13,12 @@ public class FileReferenceGenerator {
         generate("E:\\LibGdxWorkSpace\\Air-Hockey\\assets", "E:\\LibGdxWorkSpace\\Air-Hockey\\core\\src\\com\\coolstudios\\airhockey", "com.coolstudios.airhockey");
     }
 
-
     private static final ArrayList<String> fileReferenceContent = new ArrayList<>(1 << 10);
     private static final ArrayList<String> ignorePatterns = new ArrayList<>(1 << 5);
     private static final ArrayList<String> notIgnorePatterns = new ArrayList<>(1 << 5);
     private static String filePath;
     private static String writePath;
     private static int lineIndex = -1;
-
-    // TODO regex java filed name checkS
-    //  [a-zA-Z_$]{1}[0-9a-zA-Z_$]*
-    private static List<String> illegalFiledNames = new ArrayList<String>() {{
-        add("abstract");
-        // TODO add
-        //  https://baike.baidu.com/item/java%E5%85%B3%E9%94%AE%E5%AD%97
-        add("true");
-        add("false");
-        add("null");
-    }};
 
     public static void generate(String filePath, String writePath, String packageName) {
         FileReferenceGenerator.filePath = dealInputFolderPath(filePath);
