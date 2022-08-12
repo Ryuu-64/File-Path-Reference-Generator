@@ -1,9 +1,6 @@
 package pers.ryuu;
 
-import java.io.*;
-import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.List;
+import java.io.File;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -11,130 +8,94 @@ public class FileReferenceGenerator {
     // TODO update readme
     // TODO .fileignore regex
     public static void main(String[] args) {
-        generate("E:\\Air-Hockey\\assets\\", "E:\\Air-Hockey\\core\\src\\com\\coolstudios\\air_hockey\\", "com.coolstudios.air_hockey");
+        generate(
+                "E:\\Air-Hockey\\assets\\",
+                "E:\\Air-Hockey\\core\\src\\com\\coolstudios\\air_hockey\\",
+                "com.coolstudios.air_hockey"
+        );
     }
 
-    private static final List<String> fileReferenceContent = new ArrayList<>(1 << 10);
-    private static final List<String> ignorePatterns = new ArrayList<>(1 << 5);
-    private static final List<String> notIgnorePatterns = new ArrayList<>(1 << 5);
-    private static String filePath;
-    private static String referencePath;
-    private static int lineIndex = -1;
+    private static final FileReference reference = new FileReference();
+    private static FileIgnore fileIgnore;
+    private static String rootFilePath;
     private static int depth = 1;
 
-    public static void generate(String filePath, String referencePath, String packageName) {
-        FileReferenceGenerator.filePath = dealInputFolderPath(filePath);
-        FileReferenceGenerator.referencePath = dealInputFolderPath(referencePath);
-        addLine("package " + packageName + ";");
-        addLine("");
-        addLine("public class FileReference {");
-        File rootFile = new File(FileReferenceGenerator.filePath);
+    public static void generate(String rootFilePath, String referencePath, String packageName) {
+        FileReferenceGenerator.rootFilePath = dealInputFolderPath(rootFilePath);
+        reference.addLine("package " + packageName + ";");
+        reference.addLine("");
+        reference.addLine("public class FileReference {");
+        File rootFile = new File(FileReferenceGenerator.rootFilePath);
+        if (!rootFile.exists()) {
+            throw new IllegalArgumentException("unable to get root file, root file path : " + FileReferenceGenerator.rootFilePath);
+        }
         File[] files = rootFile.listFiles();
         if (files == null) {
-            throw new IllegalArgumentException("unable to get root file: " + FileReferenceGenerator.filePath);
+            throw new IllegalArgumentException("unable to get subfile in root file, root file path : " + FileReferenceGenerator.rootFilePath);
         }
-
         for (File file : files) {
             if (file.getName().equals(".fileignore")) {
-                readFileIgnore(file);
+                fileIgnore = new FileIgnore(file);
                 continue;
             }
             write(file);
         }
-        addLine("}");
-        addLine("");
-        writeFileReference();
+        reference.addLine("}");
+        reference.write(referencePath);
     }
 
     private static void write(File file) {
-        String relativeFilePath = getRelativeFilePath(file, filePath);
-        boolean isIgnore = isIgnore(relativeFilePath);
+        String relativePath = getRelativePath(file, rootFilePath);
+        boolean isIgnore = fileIgnore.isIgnore(relativePath);
+        String fieldName = getFileFieldName(file.getName());
         if (file.isDirectory()) {
-            File[] files = file.listFiles();
-            assert files != null;
             if (!isIgnore) {
-                if (fileReferenceContent.get(lineIndex).endsWith("}")) {
-                    addLine("", depth);
-                }
-                String folderString = "public static final String " + file.getName() + "$folder = \"" + relativeFilePath + "\";";
-                addLine(folderString, depth);
+                writeDirectory(fieldName, relativePath);
             }
-            addLine("", depth);
-            String classString = "public static class " + file.getName() + " {";
-            addLine(classString, depth);
-            depth++;
-            for (File childFile : files) {
-                write(childFile);
-            }
-            depth--;
-            addLine("}", depth);
-            removeIfEmptyStaticClass();
-        } else {
-            if (!isIgnore) {
-                if (fileReferenceContent.get(lineIndex).endsWith("}")) {
-                    addLine("", depth);
-                }
-                addLine("public static final String " + getFileFieldName(file.getName()) + " = \"" + relativeFilePath + "\";", depth);
-            }
+            writeSubfile(file);
+        } else if (!isIgnore) {
+            writeFile(fieldName, relativePath);
         }
     }
 
-    private static void removeIfEmptyStaticClass() {
-        if (fileReferenceContent.get(lineIndex - 1).endsWith("{") && fileReferenceContent.get(lineIndex).endsWith("}")) {
-            removeLine(); // empty line
-            removeLine(); // public static class name {
-            removeLine(); // }
+    private static void writeSubfile(File file) {
+        reference.addLineWithTab("", depth);
+        reference.addLineWithTab("public static class " + getFileFieldName(file.getName()) + " {", depth);
+        depth++;
+        File[] files = file.listFiles();
+        if (files == null) {
+            throw new RuntimeException("no subfile in file, file path : " + file.getAbsolutePath());
         }
-    }
-
-    private static boolean isIgnore(String path) {
-        boolean isIgnore = false;
-        for (String pattern : ignorePatterns) {
-            if (Pattern.matches(pattern, path)) {
-                isIgnore = true;
-            }
+        for (File childFile : files) {
+            write(childFile);
         }
+        depth--;
+        reference.addLineWithTab("}", depth);
+        reference.removeIfEmptyStaticClass();
+    }
 
-        if (isIgnore) {
-            for (String pattern : notIgnorePatterns) {
-                if (Pattern.matches(pattern, path)) {
-                    isIgnore = false;
-                    break;
-                }
-            }
+    private static void writeDirectory(String fieldName, String relativePath) {
+        if (reference.getLine().endsWith("}")) {
+            reference.addLineWithTab("", depth);
         }
-        return isIgnore;
+        reference.addLineWithTab("public static final String " + fieldName + "$directory = \"" + relativePath + "\";", depth);
     }
 
-    private static void addLine(String newLine, int tabCount) {
-        lineIndex++;
-        StringBuilder builder = new StringBuilder(newLine);
-        while (tabCount > 0) {
-            builder.insert(0, "\t");
-            tabCount--;
+    private static void writeFile(String fieldName, String relativePath) {
+        if (reference.getLine().endsWith("}")) {
+            reference.addLineWithTab("", depth);
         }
-        newLine = builder.toString();
-        fileReferenceContent.add(lineIndex, newLine);
+        reference.addLineWithTab("public static final String " + fieldName + " = \"" + relativePath + "\";", depth);
     }
 
-    private static void addLine(String newLine) {
-        lineIndex++;
-        fileReferenceContent.add(lineIndex, newLine);
-    }
-
-    private static void removeLine() {
-        fileReferenceContent.remove(lineIndex);
-        lineIndex--;
-    }
-
-    private static String getRelativeFilePath(File file, String prefix) {
+    private static String getRelativePath(File file, String prefix) {
         String path = file.getPath();
         path = path.replace(prefix, "");
         path = path.replace('\\', '/');
         if (file.isDirectory()) {
             path = path + "/";
         } else {
-            path = dealWithIllegalFieldName(path);
+            path = getLegalFieldName(path);
         }
         return path;
     }
@@ -145,22 +106,8 @@ public class FileReferenceGenerator {
         path = path.replace('.', '_');
         path = path.replace('/', '_');
         path = path.replace('\\', '_');
-        path = dealWithIllegalFieldName(path);
+        path = getLegalFieldName(path);
         return path;
-    }
-
-    private static void writeFileReference() {
-        try (FileWriter fileWriter = new FileWriter(referencePath + "/FileReference.java")) {
-            try (BufferedWriter bufferedWriter = new BufferedWriter(fileWriter)) {
-                for (String line : fileReferenceContent) {
-                    bufferedWriter.write(line);
-                    bufferedWriter.newLine();
-                }
-                bufferedWriter.flush();
-            }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
     }
 
     private static String dealInputFolderPath(String path) {
@@ -171,41 +118,13 @@ public class FileReferenceGenerator {
         return path;
     }
 
-    private static String dealWithIllegalFieldName(String fileName) {
+    private static String getLegalFieldName(String name) {
         Pattern startWithNumberPattern = Pattern.compile("\\d");
-        Matcher matcher = startWithNumberPattern.matcher(fileName.charAt(0) + "");
+        Matcher matcher = startWithNumberPattern.matcher(name.charAt(0) + "");
         if (matcher.matches()) {
-            return "$" + fileName;
+            return "$" + name;
         } else {
-            return fileName;
-        }
-    }
-
-    private static void readFileIgnore(File file) {
-        try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(Files.newInputStream(file.toPath())))) {
-            String line;
-            while ((line = bufferedReader.readLine()) != null) {
-                if (line.equals("") || line.startsWith("#")) {
-                    continue;
-                }
-
-                if (line.startsWith("!")) {
-                    line = line.replaceFirst("!", "");
-                    if (line.contains("*")) {
-                        line = line.replace("*", ".*");
-                    }
-                    line = ".*" + line;
-                    notIgnorePatterns.add(line);
-                } else {
-                    if (line.contains("*")) {
-                        line = line.replace("*", ".*");
-                    }
-                    line = ".*" + line;
-                    ignorePatterns.add(line);
-                }
-            }
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+            return name;
         }
     }
 }
