@@ -10,7 +10,7 @@ public class FileReferenceGenerator {
     // TODO update readme
     // TODO .fileignore regex
     public static void main(String[] args) {
-        generate("E:\\LibGdxWorkSpace\\Air-Hockey\\assets\\", "E:\\LibGdxWorkSpace\\Air-Hockey\\core\\src\\com\\coolstudios\\air_hockey\\lib", "com.coolstudios.air_hockey.lib");
+        generate("E:\\Air-Hockey\\assets\\", "E:\\Air-Hockey\\core\\src\\com\\coolstudios\\air_hockey\\", "com.coolstudios.air_hockey");
     }
 
     private static final ArrayList<String> fileReferenceContent = new ArrayList<>(1 << 10);
@@ -19,6 +19,7 @@ public class FileReferenceGenerator {
     private static String filePath;
     private static String writePath;
     private static int lineIndex = -1;
+    private static int depth = 1;
 
     public static void generate(String filePath, String writePath, String packageName) {
         FileReferenceGenerator.filePath = dealInputFolderPath(filePath);
@@ -51,28 +52,35 @@ public class FileReferenceGenerator {
             File[] files = file.listFiles();
             assert files != null;
             if (!isIgnore) {
-                String folderString = "public static final String " + file.getName() + "_folder = \"" + relativeFilePath + "\";";
-                addLine(folderString);
-                addLine("");
+                if (fileReferenceContent.get(lineIndex).endsWith("}")) {
+                    addLine("", depth);
+                }
+                String folderString = "public static final String " + file.getName() + "$folder = \"" + relativeFilePath + "\";";
+                addLine(folderString, depth);
             }
-            String classString = "public static class " + file.getName() + "{";
-            addLine(classString);
+            addLine("", depth);
+            String classString = "public static class " + file.getName() + " {";
+            addLine(classString, depth);
+            depth++;
             for (File childFile : files) {
                 write(childFile);
             }
-            addLine("}");
+            depth--;
+            addLine("}", depth);
 
-            // if the static class contains no field
-            if (fileReferenceContent.get(lineIndex - 1).equals(classString) && fileReferenceContent.get(lineIndex).equals("}")) {
+            // if the static class contains no field remove the class
+            if (fileReferenceContent.get(lineIndex - 1).endsWith(classString) && fileReferenceContent.get(lineIndex).endsWith("}")) {
                 removeLine();
                 removeLine();
             }
         } else {
             if (!isIgnore) {
-                addLine("public static final String " + getFileFieldName(file.getName()) + " = \"" + relativeFilePath + "\";");
+                if (fileReferenceContent.get(lineIndex).endsWith("}")) {
+                    addLine("", depth);
+                }
+                addLine("public static final String " + getFileFieldName(file.getName()) + " = \"" + relativeFilePath + "\";", depth);
             }
         }
-
     }
 
     private static boolean isIgnore(String path) {
@@ -92,6 +100,17 @@ public class FileReferenceGenerator {
             }
         }
         return isIgnore;
+    }
+
+    private static void addLine(String newLine, int tabCount) {
+        lineIndex++;
+        StringBuilder builder = new StringBuilder(newLine);
+        while (tabCount > 0) {
+            builder.insert(0, "\t");
+            tabCount--;
+        }
+        newLine = builder.toString();
+        fileReferenceContent.add(lineIndex, newLine);
     }
 
     private static void addLine(String newLine) {
