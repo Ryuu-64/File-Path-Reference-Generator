@@ -1,10 +1,11 @@
 package pers.ryuu;
 
 import java.io.File;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class FileReferenceGenerator {
+    private FileReferenceGenerator() {
+    }
+
     // TODO update readme
     // TODO .fileignore regex
     public static void main(String[] args) {
@@ -16,6 +17,7 @@ public class FileReferenceGenerator {
     }
 
     private static final FileReference reference = new FileReference();
+    private static final FieldNameProcessor fieldNameProcessor = new FieldNameProcessor();
     private static FileIgnore fileIgnore;
     private static String rootFilePath;
     private static int depth = 1;
@@ -36,10 +38,16 @@ public class FileReferenceGenerator {
         for (File file : files) {
             if (file.getName().equals(".fileignore")) {
                 fileIgnore = new FileIgnore(file);
-                continue;
+                break;
             }
-            write(file);
         }
+
+        for (File file : files) {
+            if (!file.getName().equals(".fileignore")) {
+                write(file);
+            }
+        }
+
         reference.addLine("}");
         reference.write(referencePath);
     }
@@ -47,7 +55,7 @@ public class FileReferenceGenerator {
     private static void write(File file) {
         String relativePath = getRelativePath(file, rootFilePath);
         boolean isIgnore = fileIgnore.isIgnore(relativePath);
-        String fieldName = formatFileFieldName(file.getName());
+        String fieldName = fieldNameProcessor.getLegal(file.getName());
         if (file.isDirectory()) {
             if (!isIgnore) {
                 writeDirectory(fieldName, relativePath);
@@ -60,7 +68,7 @@ public class FileReferenceGenerator {
 
     private static void writeSubfile(File file) {
         reference.addLineWithTab("", depth);
-        reference.addLineWithTab("public static class " + formatFileFieldName(file.getName()) + " {", depth);
+        reference.addLineWithTab("public static class " + fieldNameProcessor.getLegal(file.getName()) + " {", depth);
         depth++;
         File[] files = file.listFiles();
         if (files == null) {
@@ -92,17 +100,7 @@ public class FileReferenceGenerator {
         String path = file.getPath();
         path = path.replace(prefix, "");
         path = path.replace('\\', '/');
-        return file.isDirectory() ? getLegalFieldName(path + "/") : getLegalFieldName(path);
-    }
-
-    private static String formatFileFieldName(String path) {
-        path = path.replace(' ', '_');
-        path = path.replace('-', '_');
-        path = path.replace('.', '_');
-        path = path.replace('/', '_');
-        path = path.replace('\\', '_');
-        path = getLegalFieldName(path);
-        return path;
+        return file.isDirectory() ? path + "/" : path;
     }
 
     private static String formatRootFilePath(String path) {
@@ -111,15 +109,5 @@ public class FileReferenceGenerator {
             path = path + "\\";
         }
         return path;
-    }
-
-    private static String getLegalFieldName(String name) {
-        Pattern startWithNumberPattern = Pattern.compile("\\d");
-        Matcher matcher = startWithNumberPattern.matcher(name.charAt(0) + "");
-        if (matcher.matches()) {
-            return "$" + name;
-        } else {
-            return name;
-        }
     }
 }

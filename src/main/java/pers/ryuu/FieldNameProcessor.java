@@ -3,11 +3,8 @@ package pers.ryuu;
 import java.util.HashSet;
 import java.util.regex.Pattern;
 
-public class FiledNameChecker {
-    private FiledNameChecker() {
-    }
-
-    private static final HashSet<String> illegalFieldNameSet = new HashSet<String>() {{
+public class FieldNameProcessor {
+    private final HashSet<String> reservedWords = new HashSet<String>() {{
         add("abstract");
         add("assert");
         add("boolean");
@@ -63,11 +60,15 @@ public class FiledNameChecker {
         add("null");
     }};
 
-    public static boolean isLegal(String fieldName) {
-        if (illegalFieldNameSet.contains(fieldName)) {
-            return false;
+    public String getLegal(String name) {
+        if (reservedWords.contains(name)) {
+            return "$" + name;
         }
-        String regex = "^[a-zA-Z_$][\\da-zA-Z_$]*$";
-        return Pattern.matches(regex, fieldName);
+        String legalName = name.replaceAll("[^\\da-zA-Z_$]", "_");
+        if (Pattern.matches("^[^a-zA-Z_$].*$", legalName)) {
+            return "$" + legalName;
+        } else {
+            return legalName;
+        }
     }
 }
