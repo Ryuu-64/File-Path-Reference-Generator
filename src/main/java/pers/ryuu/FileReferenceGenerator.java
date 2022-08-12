@@ -3,6 +3,7 @@ package pers.ryuu;
 import java.io.*;
 import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -13,17 +14,17 @@ public class FileReferenceGenerator {
         generate("E:\\Air-Hockey\\assets\\", "E:\\Air-Hockey\\core\\src\\com\\coolstudios\\air_hockey\\", "com.coolstudios.air_hockey");
     }
 
-    private static final ArrayList<String> fileReferenceContent = new ArrayList<>(1 << 10);
-    private static final ArrayList<String> ignorePatterns = new ArrayList<>(1 << 5);
-    private static final ArrayList<String> notIgnorePatterns = new ArrayList<>(1 << 5);
+    private static final List<String> fileReferenceContent = new ArrayList<>(1 << 10);
+    private static final List<String> ignorePatterns = new ArrayList<>(1 << 5);
+    private static final List<String> notIgnorePatterns = new ArrayList<>(1 << 5);
     private static String filePath;
-    private static String writePath;
+    private static String referencePath;
     private static int lineIndex = -1;
     private static int depth = 1;
 
-    public static void generate(String filePath, String writePath, String packageName) {
+    public static void generate(String filePath, String referencePath, String packageName) {
         FileReferenceGenerator.filePath = dealInputFolderPath(filePath);
-        FileReferenceGenerator.writePath = dealInputFolderPath(writePath);
+        FileReferenceGenerator.referencePath = dealInputFolderPath(referencePath);
         addLine("package " + packageName + ";");
         addLine("");
         addLine("public class FileReference {");
@@ -67,12 +68,7 @@ public class FileReferenceGenerator {
             }
             depth--;
             addLine("}", depth);
-
-            // if the static class contains no field remove the class
-            if (fileReferenceContent.get(lineIndex - 1).endsWith(classString) && fileReferenceContent.get(lineIndex).endsWith("}")) {
-                removeLine();
-                removeLine();
-            }
+            removeIfEmptyStaticClass();
         } else {
             if (!isIgnore) {
                 if (fileReferenceContent.get(lineIndex).endsWith("}")) {
@@ -80,6 +76,14 @@ public class FileReferenceGenerator {
                 }
                 addLine("public static final String " + getFileFieldName(file.getName()) + " = \"" + relativeFilePath + "\";", depth);
             }
+        }
+    }
+
+    private static void removeIfEmptyStaticClass() {
+        if (fileReferenceContent.get(lineIndex - 1).endsWith("{") && fileReferenceContent.get(lineIndex).endsWith("}")) {
+            removeLine(); // empty line
+            removeLine(); // public static class name {
+            removeLine(); // }
         }
     }
 
@@ -146,7 +150,7 @@ public class FileReferenceGenerator {
     }
 
     private static void writeFileReference() {
-        try (FileWriter fileWriter = new FileWriter(writePath + "/FileReference.java")) {
+        try (FileWriter fileWriter = new FileWriter(referencePath + "/FileReference.java")) {
             try (BufferedWriter bufferedWriter = new BufferedWriter(fileWriter)) {
                 for (String line : fileReferenceContent) {
                     bufferedWriter.write(line);
