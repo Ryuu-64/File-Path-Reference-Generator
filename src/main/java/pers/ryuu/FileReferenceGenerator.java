@@ -21,7 +21,7 @@ public class FileReferenceGenerator {
     private static int depth = 1;
 
     public static void generate(String rootFilePath, String referencePath, String packageName) {
-        FileReferenceGenerator.rootFilePath = dealInputFolderPath(rootFilePath);
+        FileReferenceGenerator.rootFilePath = formatRootFilePath(rootFilePath);
         reference.addLine("package " + packageName + ";");
         reference.addLine("");
         reference.addLine("public class FileReference {");
@@ -47,7 +47,7 @@ public class FileReferenceGenerator {
     private static void write(File file) {
         String relativePath = getRelativePath(file, rootFilePath);
         boolean isIgnore = fileIgnore.isIgnore(relativePath);
-        String fieldName = getFileFieldName(file.getName());
+        String fieldName = formatFileFieldName(file.getName());
         if (file.isDirectory()) {
             if (!isIgnore) {
                 writeDirectory(fieldName, relativePath);
@@ -60,7 +60,7 @@ public class FileReferenceGenerator {
 
     private static void writeSubfile(File file) {
         reference.addLineWithTab("", depth);
-        reference.addLineWithTab("public static class " + getFileFieldName(file.getName()) + " {", depth);
+        reference.addLineWithTab("public static class " + formatFileFieldName(file.getName()) + " {", depth);
         depth++;
         File[] files = file.listFiles();
         if (files == null) {
@@ -92,15 +92,10 @@ public class FileReferenceGenerator {
         String path = file.getPath();
         path = path.replace(prefix, "");
         path = path.replace('\\', '/');
-        if (file.isDirectory()) {
-            path = path + "/";
-        } else {
-            path = getLegalFieldName(path);
-        }
-        return path;
+        return file.isDirectory() ? getLegalFieldName(path + "/") : getLegalFieldName(path);
     }
 
-    private static String getFileFieldName(String path) {
+    private static String formatFileFieldName(String path) {
         path = path.replace(' ', '_');
         path = path.replace('-', '_');
         path = path.replace('.', '_');
@@ -110,7 +105,7 @@ public class FileReferenceGenerator {
         return path;
     }
 
-    private static String dealInputFolderPath(String path) {
+    private static String formatRootFilePath(String path) {
         path = path.replace('/', '\\');
         if (!path.endsWith("\\")) {
             path = path + "\\";
