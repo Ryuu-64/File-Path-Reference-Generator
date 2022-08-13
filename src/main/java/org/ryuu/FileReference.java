@@ -45,7 +45,7 @@ public class FileReference {
     }
 
     public void write(String referencePath) {
-        try (FileWriter fileWriter = new FileWriter(referencePath + "/FileReference.java")) {
+        try (FileWriter fileWriter = new FileWriter(referencePath + "/FileReference.java", false)) {
             try (BufferedWriter bufferedWriter = new BufferedWriter(fileWriter)) {
                 for (String line : content) {
                     bufferedWriter.write(line);
