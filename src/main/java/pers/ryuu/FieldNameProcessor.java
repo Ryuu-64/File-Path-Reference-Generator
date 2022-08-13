@@ -4,7 +4,10 @@ import java.util.HashSet;
 import java.util.regex.Pattern;
 
 public class FieldNameProcessor {
-    private final HashSet<String> reservedWords = new HashSet<String>() {{
+    private FieldNameProcessor() {
+    }
+
+    private static final HashSet<String> reservedWords = new HashSet<String>() {{
         add("abstract");
         add("assert");
         add("boolean");
@@ -60,7 +63,7 @@ public class FieldNameProcessor {
         add("null");
     }};
 
-    public String getLegal(String name) {
+    public static String getLegal(String name) {
         if (reservedWords.contains(name)) {
             return "$" + name;
         }

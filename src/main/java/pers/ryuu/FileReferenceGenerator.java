@@ -2,22 +2,13 @@ package pers.ryuu;
 
 import java.io.File;
 
+import static pers.ryuu.FieldNameProcessor.*;
+
 public class FileReferenceGenerator {
     private FileReferenceGenerator() {
     }
 
-    // TODO update readme
-    // TODO .fileignore regex
-    public static void main(String[] args) {
-        generate(
-                "E:\\Air-Hockey\\assets\\",
-                "E:\\Air-Hockey\\core\\src\\com\\coolstudios\\air_hockey\\",
-                "com.coolstudios.air_hockey"
-        );
-    }
-
     private static final FileReference reference = new FileReference();
-    private static final FieldNameProcessor fieldNameProcessor = new FieldNameProcessor();
     private static FileIgnore fileIgnore;
     private static String rootFilePath;
     private static int depth = 1;
@@ -54,8 +45,8 @@ public class FileReferenceGenerator {
 
     private static void write(File file) {
         String relativePath = getRelativePath(file, rootFilePath);
-        boolean isIgnore = fileIgnore.isIgnore(relativePath);
-        String fieldName = fieldNameProcessor.getLegal(file.getName());
+        boolean isIgnore = fileIgnore == null || fileIgnore.isIgnore(relativePath);
+        String fieldName = getLegal(file.getName());
         if (file.isDirectory()) {
             if (!isIgnore) {
                 writeDirectory(fieldName, relativePath);
@@ -68,7 +59,7 @@ public class FileReferenceGenerator {
 
     private static void writeSubfile(File file) {
         reference.addLineWithTab("", depth);
-        reference.addLineWithTab("public static class " + fieldNameProcessor.getLegal(file.getName()) + " {", depth);
+        reference.addLineWithTab("public static class " + getLegal(file.getName()) + " {", depth);
         depth++;
         File[] files = file.listFiles();
         if (files == null) {
