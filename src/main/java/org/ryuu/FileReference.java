@@ -53,6 +53,7 @@ public class FileReference {
                 }
                 bufferedWriter.flush();
                 content.clear();
+                index = -1;
             }
         } catch (IOException e) {
             e.printStackTrace();
