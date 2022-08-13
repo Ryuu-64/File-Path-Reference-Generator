@@ -45,13 +45,14 @@ public class FileReference {
     }
 
     public void write(String referencePath) {
-        try (FileWriter fileWriter = new FileWriter(referencePath + "/FileReference.java", false)) {
+        try (FileWriter fileWriter = new FileWriter(referencePath + "/FileReference.java")) {
             try (BufferedWriter bufferedWriter = new BufferedWriter(fileWriter)) {
                 for (String line : content) {
                     bufferedWriter.write(line);
                     bufferedWriter.newLine();
                 }
                 bufferedWriter.flush();
+                content.clear();
             }
         } catch (IOException e) {
             e.printStackTrace();
