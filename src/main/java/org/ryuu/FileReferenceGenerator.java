@@ -1,8 +1,8 @@
-package pers.ryuu;
+package org.ryuu;
 
 import java.io.File;
 
-import static pers.ryuu.FieldNameProcessor.*;
+import static org.ryuu.FieldNameProcessor.*;
 
 public class FileReferenceGenerator {
     private FileReferenceGenerator() {

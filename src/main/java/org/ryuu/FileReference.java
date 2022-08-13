@@ -1,4 +1,4 @@
-package pers.ryuu;
+package org.ryuu;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;

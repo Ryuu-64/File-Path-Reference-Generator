@@ -1,4 +1,4 @@
-package pers.ryuu;
+package org.ryuu;
 
 import java.util.HashSet;
 import java.util.regex.Pattern;

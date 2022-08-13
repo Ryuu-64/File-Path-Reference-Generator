@@ -17,12 +17,7 @@
 
 ## 如何使用
 
-```
-FileReferenceGenerator.generate(
-    "E:/LibGdxWorkSpace/Air-Hockey/assets/", // 目标资源根文件夹的绝对路径
-    "C:/Users/Ryuu/Documents/File-Reference-Generator/src/main/java/pers/ryuu" // 目标代码文件夹中的位置
-);
-```
+
 
 ## 详细
 
