@@ -7,6 +7,14 @@ public class FileReferenceGenerator {
     private FileReferenceGenerator() {
     }
 
+    public static void main(String[] args) {
+        generate(
+                "E:\\SvnWorkspace\\cooyocode\\fingerhockey\\Air-Hockey\\android\\assets\\",
+                "E:\\SvnWorkspace\\cooyocode\\fingerhockey\\Air-Hockey\\core\\src\\com\\coolstudios\\air_hockey",
+                "com.coolstudios.air_hockey"
+        );
+    }
+
     private static final FileReference reference = new FileReference();
     private static FileIgnore fileIgnore;
     private static String rootFilePath;
@@ -46,7 +54,7 @@ public class FileReferenceGenerator {
 
     private static void write(File file) {
         String relativePath = getRelativePath(file, rootFilePath);
-        boolean isIgnore = fileIgnore == null || fileIgnore.isIgnore(relativePath);
+        boolean isIgnore = fileIgnore != null && fileIgnore.isIgnore(relativePath);
         String fieldName = FieldNameProcessor.getLegal(file.getName());
         if (file.isDirectory()) {
             if (!isIgnore) {
@@ -111,7 +119,7 @@ public class FileReferenceGenerator {
         }
         depth = 1;
         reference.addLineWithTab("", depth);
-        reference.addLineWithTab("public static class Suffix {", depth);
+        reference.addLineWithTab("public static class $suffix {", depth);
         depth++;
         for (String suffix : suffixes) {
             reference.addLineWithTab("public static final String " + FieldNameProcessor.getLegal(suffix) + " = \"" + suffix + "\";", depth);
