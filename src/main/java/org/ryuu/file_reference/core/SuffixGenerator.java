@@ -1,4 +1,4 @@
-package org.ryuu;
+package org.ryuu.file_reference.core;
 
 import java.util.HashSet;
 import java.util.Set;

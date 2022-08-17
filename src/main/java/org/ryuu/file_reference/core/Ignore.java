@@ -1,4 +1,4 @@
-package org.ryuu;
+package org.ryuu.file_reference.core;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -8,11 +8,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
-public class FileIgnore {
+public class Ignore {
     private final List<String> ignorePatterns = new ArrayList<>();
     private final List<String> notIgnorePatterns = new ArrayList<>();
 
-    public FileIgnore(File file) {
+    public Ignore(File file) {
         read(file);
     }
 

@@ -1,31 +1,25 @@
-package org.ryuu;
+package org.ryuu.file_reference.core;
+
+import org.ryuu.functional.Action;
 
 import java.io.File;
 import java.util.Set;
 
-public class FileReferenceGenerator {
-    private FileReferenceGenerator() {
-    }
-
-    public static void main(String[] args) {
-        new FileReferenceGenerator().generate(
-                "E:\\SvnWorkspace\\cooyocode\\fingerhockey\\tags\\AirHockey\\Air-Hockey\\android\\assets",
-                "E:\\SvnWorkspace\\cooyocode\\fingerhockey\\tags\\AirHockey\\Air-Hockey\\core\\src\\com\\coolstudios\\air_hockey",
-                "com.coolstudios.air_hockey"
-        );
-    }
-
+public class ReferenceGenerator {
+    public final Action generateStart = new Action();
+    public final Action generateOver = new Action();
     private final SuffixGenerator suffix = new SuffixGenerator();
-    private final FileContent reference = new FileContent();
-    private FileIgnore fileIgnore;
+    private final Content content = new Content();
+    private Ignore ignore;
     private String rootFilePath;
-    private int depth = 1;
+    private int indentationDepth = 1;
 
-    public void generate(String rootFilePath, String referencePath, String packageName) {
+    public void generate(String rootFilePath, String referencePath, String packageName, String scriptName) {
+        generateStart.invoke();
         this.rootFilePath = formatRootFilePath(rootFilePath);
-        reference.addLine("package " + packageName + ";");
-        reference.addLine("");
-        reference.addLine("public class FileReference {");
+        content.addLine("package " + packageName + ";");
+        content.addLine("");
+        content.addLine("public class FileReference {");
         File rootFile = new File(this.rootFilePath);
         if (!rootFile.exists()) {
             throw new IllegalArgumentException("unable to get root file, root file path : " + this.rootFilePath);
@@ -36,7 +30,7 @@ public class FileReferenceGenerator {
         }
         for (File file : files) {
             if (file.getName().equals(".fileignore")) {
-                fileIgnore = new FileIgnore(file);
+                ignore = new Ignore(file);
                 break;
             }
         }
@@ -49,14 +43,15 @@ public class FileReferenceGenerator {
 
         writeSuffix();
         suffix.clear();
-        reference.addLine("}");
-        reference.write(referencePath);
+        content.addLine("}");
+        content.write(referencePath, scriptName);
+        generateOver.invoke();
     }
 
     private void write(File file) {
         String relativePath = getRelativePath(file, rootFilePath);
-        boolean isIgnore = fileIgnore != null && fileIgnore.isIgnore(relativePath);
-        String fieldName = FieldNameProcessor.getLegal(file.getName());
+        boolean isIgnore = ignore != null && ignore.isIgnore(relativePath);
+        String fieldName = FieldNameChecker.getLegal(file.getName());
         if (file.isDirectory()) {
             if (!isIgnore) {
                 writeDirectory(fieldName, relativePath);
@@ -83,16 +78,16 @@ public class FileReferenceGenerator {
     }
 
     private void writeDirectory(String fieldName, String relativePath) {
-        if (reference.getLine().endsWith("}")) {
-            reference.addLineWithTab("", depth);
+        if (content.getLine().endsWith("}")) {
+            content.addLineWithTab("", indentationDepth);
         }
-        reference.addLineWithTab("public static final String " + fieldName + "$directory = \"" + relativePath + "\";", depth);
+        content.addLineWithTab("public static final String " + fieldName + "$directory = \"" + relativePath + "\";", indentationDepth);
     }
 
     private void writeSubfile(File file) {
-        reference.addLineWithTab("", depth);
-        reference.addLineWithTab("public static class " + FieldNameProcessor.getLegal(file.getName()) + " {", depth);
-        depth++;
+        content.addLineWithTab("", indentationDepth);
+        content.addLineWithTab("public static class " + FieldNameChecker.getLegal(file.getName()) + " {", indentationDepth);
+        indentationDepth++;
         File[] files = file.listFiles();
         if (files == null) {
             throw new RuntimeException("no subfile in file, file path : " + file.getAbsolutePath());
@@ -100,17 +95,17 @@ public class FileReferenceGenerator {
         for (File childFile : files) {
             write(childFile);
         }
-        depth--;
-        reference.addLineWithTab("}", depth);
-        reference.removeIfEmptyStaticClass();
+        indentationDepth--;
+        content.addLineWithTab("}", indentationDepth);
+        content.removeIfEmptyStaticClass();
     }
 
     private void writeFile(String fieldName, String relativePath) {
-        if (reference.getLine().endsWith("}")) {
-            reference.addLineWithTab("", depth);
+        if (content.getLine().endsWith("}")) {
+            content.addLineWithTab("", indentationDepth);
         }
         suffix.tryAdd(relativePath);
-        reference.addLineWithTab("public static final String " + fieldName + " = \"" + relativePath + "\";", depth);
+        content.addLineWithTab("public static final String " + fieldName + " = \"" + relativePath + "\";", indentationDepth);
     }
 
     private void writeSuffix() {
@@ -118,15 +113,15 @@ public class FileReferenceGenerator {
         if (suffixes.size() == 0) {
             return;
         }
-        depth = 1;
-        reference.addLineWithTab("", depth);
-        reference.addLineWithTab("public static class $suffix {", depth);
-        depth++;
+        indentationDepth = 1;
+        content.addLineWithTab("", indentationDepth);
+        content.addLineWithTab("public static class $suffix {", indentationDepth);
+        indentationDepth++;
         for (String suffix : suffixes) {
-            reference.addLineWithTab("public static final String " + FieldNameProcessor.getLegal(suffix) + " = \"" + suffix + "\";", depth);
+            content.addLineWithTab("public static final String " + FieldNameChecker.getLegal(suffix) + " = \"" + suffix + "\";", indentationDepth);
         }
-        depth--;
-        reference.addLineWithTab("}", depth);
-        reference.removeIfEmptyStaticClass();
+        indentationDepth--;
+        content.addLineWithTab("}", indentationDepth);
+        content.removeIfEmptyStaticClass();
     }
 }

@@ -1,10 +1,10 @@
-package org.ryuu;
+package org.ryuu.file_reference.core;
 
 import java.util.HashSet;
 import java.util.regex.Pattern;
 
-public class FieldNameProcessor {
-    private FieldNameProcessor() {
+public class FieldNameChecker {
+    private FieldNameChecker() {
     }
 
     private static final HashSet<String> reservedWords = new HashSet<String>() {{

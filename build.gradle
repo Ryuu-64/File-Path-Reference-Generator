@@ -8,9 +8,20 @@ version '0.1.0-SNAPSHOT'
 repositories {
     mavenLocal()
     mavenCentral()
+    maven { url 'https://jitpack.io' }
+}
+
+dependencies {
+    implementation 'com.github.Ryuu-64:Functional:0.1.0'
 }
 
 java {
     sourceCompatibility = JavaVersion.VERSION_1_8
     targetCompatibility = JavaVersion.VERSION_1_8
+}
+
+jar {
+    manifest {
+        attributes 'Main-Class' : 'org.ryuu.file_reference.gui.FileReferenceGeneratorGUI'
+    }
 }

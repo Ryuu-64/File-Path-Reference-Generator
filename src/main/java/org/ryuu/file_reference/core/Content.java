@@ -1,4 +1,4 @@
-package org.ryuu;
+package org.ryuu.file_reference.core;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FileContent {
+public class Content {
     private final List<String> content = new ArrayList<>();
 
     private int index = -1;
@@ -44,8 +44,8 @@ public class FileContent {
         }
     }
 
-    public void write(String referencePath) {
-        try (FileWriter fileWriter = new FileWriter(referencePath + "/FileReference.java")) {
+    public void write(String referencePath, String scriptName) {
+        try (FileWriter fileWriter = new FileWriter(referencePath + "/" + scriptName)) {
             try (BufferedWriter bufferedWriter = new BufferedWriter(fileWriter)) {
                 for (String line : content) {
                     bufferedWriter.write(line);
