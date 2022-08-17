@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FileReference {
+public class FileContent {
     private final List<String> content = new ArrayList<>();
 
     private int index = -1;

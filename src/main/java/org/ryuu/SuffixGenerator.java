@@ -4,17 +4,17 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class SuffixGenerator {
-    private static final HashSet<String> suffixes = new HashSet<>();
+    private final HashSet<String> suffixes = new HashSet<>();
 
-    public static void clear() {
+    public void clear() {
         suffixes.clear();
     }
 
-    public static Set<String> get() {
+    public Set<String> get() {
         return suffixes;
     }
 
-    public static void tryAdd(String filePath) {
+    public void tryAdd(String filePath) {
         int index = filePath.lastIndexOf(".");
         if (index == -1) {
             return;
