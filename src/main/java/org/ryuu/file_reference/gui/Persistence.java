@@ -3,7 +3,7 @@ package org.ryuu.file_reference.gui;
 import java.util.prefs.Preferences;
 
 public class Persistence {
-    private static final Preferences preferences = Preferences.userNodeForPackage(FileReferenceGeneratorGUI.class);
+    private static final Preferences preferences = Preferences.userNodeForPackage(GUI.class);
 
     public static String getRootFilePath() {
         return preferences.get("rootFilePath", "");

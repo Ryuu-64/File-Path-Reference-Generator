@@ -5,7 +5,7 @@ import org.ryuu.functional.Action;
 import java.io.File;
 import java.util.Set;
 
-public class PathGenerator {
+public class Generator {
     public final Action generateStart = new Action();
     public final Action generateOver = new Action();
     private final SuffixGenerator suffix = new SuffixGenerator();
@@ -44,7 +44,7 @@ public class PathGenerator {
             }
         }
 
-        writeSuffix();
+        addSuffix();
         suffix.clear();
         content.addLine("}");
         content.write(referencePath, scriptName);
@@ -57,11 +57,11 @@ public class PathGenerator {
         String fieldName = FieldNameChecker.getLegal(file.getName());
         if (file.isDirectory()) {
             if (!isIgnore) {
-                writeDirectory(fieldName, relativePath);
+                addDirectory(fieldName, relativePath);
             }
-            writeSubfile(file);
+            addSubfile(file);
         } else if (!isIgnore) {
-            writeFile(fieldName, relativePath);
+            addFile(fieldName, relativePath);
         }
     }
 
@@ -80,14 +80,14 @@ public class PathGenerator {
         return path;
     }
 
-    private void writeDirectory(String fieldName, String relativePath) {
+    private void addDirectory(String fieldName, String relativePath) {
         if (content.getLine().endsWith("}")) {
             content.addLineWithTab("", indentationDepth);
         }
         content.addLineWithTab("public static final String " + fieldName + "$directory = \"" + relativePath + "\";", indentationDepth);
     }
 
-    private void writeSubfile(File file) {
+    private void addSubfile(File file) {
         content.addLineWithTab("", indentationDepth);
         content.addLineWithTab("public static class " + FieldNameChecker.getLegal(file.getName()) + " {", indentationDepth);
         indentationDepth++;
@@ -103,7 +103,7 @@ public class PathGenerator {
         content.removeIfEmptyStaticClass();
     }
 
-    private void writeFile(String fieldName, String relativePath) {
+    private void addFile(String fieldName, String relativePath) {
         if (content.getLine().endsWith("}")) {
             content.addLineWithTab("", indentationDepth);
         }
@@ -111,7 +111,7 @@ public class PathGenerator {
         content.addLineWithTab("public static final String " + fieldName + " = \"" + relativePath + "\";", indentationDepth);
     }
 
-    private void writeSuffix() {
+    private void addSuffix() {
         Set<String> suffixes = suffix.get();
         if (suffixes.size() == 0) {
             return;
