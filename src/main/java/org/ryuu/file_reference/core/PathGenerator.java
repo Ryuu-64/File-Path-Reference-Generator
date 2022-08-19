@@ -5,7 +5,7 @@ import org.ryuu.functional.Action;
 import java.io.File;
 import java.util.Set;
 
-public class ReferenceGenerator {
+public class PathGenerator {
     public final Action generateStart = new Action();
     public final Action generateOver = new Action();
     private final SuffixGenerator suffix = new SuffixGenerator();
@@ -15,6 +15,9 @@ public class ReferenceGenerator {
     private int indentationDepth = 1;
 
     public void generate(String rootFilePath, String referencePath, String packageName, String scriptName) {
+        if (rootFilePath.equals("")) {
+            throw new IllegalArgumentException("root file path can't be null");
+        }
         generateStart.invoke();
         this.rootFilePath = formatRootFilePath(rootFilePath);
         content.addLine("package " + packageName + ";");

@@ -6,7 +6,6 @@ group 'pers.ryuu'
 version '0.1.0-SNAPSHOT'
 
 repositories {
-    mavenLocal()
     mavenCentral()
     maven { url 'https://jitpack.io' }
 }
@@ -20,8 +19,17 @@ java {
     targetCompatibility = JavaVersion.VERSION_1_8
 }
 
+configurations {
+    implementation.canBeResolved(true)
+}
+
 jar {
+    manifestContentCharset 'utf-8'
+    metadataCharset 'utf-8'
     manifest {
-        attributes 'Main-Class' : 'org.ryuu.file_reference.gui.FileReferenceGeneratorGUI'
+        attributes 'Main-Class': 'org.ryuu.file_reference.gui.FileReferenceGeneratorGUI'
+    }
+    from {
+        configurations.implementation.collect { file -> file.isDirectory() ? file : zipTree(file) }
     }
 }

@@ -1,6 +1,6 @@
 package org.ryuu.file_reference.gui;
 
-import org.ryuu.file_reference.core.ReferenceGenerator;
+import org.ryuu.file_reference.core.PathGenerator;
 
 import javax.swing.*;
 import java.awt.*;
@@ -13,7 +13,7 @@ import static javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED;
 import static org.ryuu.file_reference.gui.Persistence.*;
 
 public class FileReferenceGeneratorGUI {
-    private static final ReferenceGenerator referenceGenerator = new ReferenceGenerator();
+    private static final PathGenerator PATH_GENERATOR = new PathGenerator();
 
     public static void main(String[] args) {
         JPanel rootFilePathPanel = new JPanel();
@@ -115,7 +115,7 @@ public class FileReferenceGeneratorGUI {
             putReferencePath(referencePathTextField.getText());
             putPackageName(packageNameTextField.getText());
             putScriptName(scriptNameTextField.getText());
-            referenceGenerator.generate(
+            PATH_GENERATOR.generate(
                     rootFilePathTextField.getText(),
                     referencePathTextField.getText(),
                     packageNameTextField.getText(),
@@ -123,8 +123,8 @@ public class FileReferenceGeneratorGUI {
             );
         });
 
-        referenceGenerator.generateStart.add(() -> System.out.println("generate start"));
-        referenceGenerator.generateOver.add(() -> System.out.println("generate over"));
+        PATH_GENERATOR.generateStart.add(() -> System.out.println("generate start"));
+        PATH_GENERATOR.generateOver.add(() -> System.out.println("generate over"));
 
         frame.pack();
         frame.setResizable(false);
