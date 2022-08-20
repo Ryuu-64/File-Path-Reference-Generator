@@ -1,6 +1,6 @@
-package org.ryuu.file_reference.gui;
+package org.ryuu.file_path_reference_generator.gui;
 
-import org.ryuu.file_reference.core.Generator;
+import org.ryuu.file_path_reference_generator.core.Generator;
 
 import javax.swing.*;
 import java.awt.*;
@@ -12,25 +12,25 @@ import java.io.PrintStream;
 import static java.awt.FlowLayout.CENTER;
 import static javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED;
 import static javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED;
-import static org.ryuu.file_reference.gui.Persistence.*;
+import static org.ryuu.file_path_reference_generator.gui.Persistence.*;
 
 public class GUI {
     private static final Generator GENERATOR = new Generator();
 
     public static void main(String[] args) {
-        JPanel rootFilePathPanel = new JPanel();
-        rootFilePathPanel.setLayout(new FlowLayout(CENTER, 8, 4));
-        JLabel rootFilePathLabel = new JLabel("Root file path :");
-        rootFilePathPanel.add(rootFilePathLabel);
-        JTextField rootFilePathTextField = new JTextField(55);
-        rootFilePathPanel.add(rootFilePathTextField);
+        JPanel rootDirectoryPathPanel = new JPanel();
+        rootDirectoryPathPanel.setLayout(new FlowLayout(CENTER, 8, 4));
+        JLabel rootDirectoryPathLabel = new JLabel("Root directory path :");
+        rootDirectoryPathPanel.add(rootDirectoryPathLabel);
+        JTextField rootDirectoryPathTextField = new JTextField(55);
+        rootDirectoryPathPanel.add(rootDirectoryPathTextField);
 
-        JPanel referencePathPanel = new JPanel();
-        referencePathPanel.setLayout(new FlowLayout(CENTER, 8, 4));
-        JLabel referencePathLabel = new JLabel("Reference path :");
-        referencePathPanel.add(referencePathLabel);
-        JTextField referencePathTextField = new JTextField(55);
-        referencePathPanel.add(referencePathTextField);
+        JPanel referenceScriptPathPanel = new JPanel();
+        referenceScriptPathPanel.setLayout(new FlowLayout(CENTER, 8, 4));
+        JLabel referenceScriptPathLabel = new JLabel("Reference Script Path :");
+        referenceScriptPathPanel.add(referenceScriptPathLabel);
+        JTextField referenceScriptPathTextField = new JTextField(55);
+        referenceScriptPathPanel.add(referenceScriptPathTextField);
 
         JPanel packageNamePanel = new JPanel();
         packageNamePanel.setLayout(new FlowLayout(CENTER, 8, 4));
@@ -39,17 +39,17 @@ public class GUI {
         JTextField packageNameTextField = new JTextField(55);
         packageNamePanel.add(packageNameTextField);
 
-        JPanel scriptNamePanel = new JPanel();
-        scriptNamePanel.setLayout(new FlowLayout(CENTER, 8, 4));
-        JLabel scriptNameLabel = new JLabel("Script name :");
-        scriptNamePanel.add(scriptNameLabel);
-        JTextField scriptNameTextField = new JTextField(55);
-        scriptNamePanel.add(scriptNameTextField);
+        JPanel referenceScriptNamePanel = new JPanel();
+        referenceScriptNamePanel.setLayout(new FlowLayout(CENTER, 8, 4));
+        JLabel referenceScriptNameLabel = new JLabel("Reference script name :");
+        referenceScriptNamePanel.add(referenceScriptNameLabel);
+        JTextField referenceScriptNameTextField = new JTextField(55);
+        referenceScriptNamePanel.add(referenceScriptNameTextField);
 
-        JPanel generateButton = new JPanel();
-        generateButton.setLayout(new FlowLayout(CENTER, 8, 4));
-        JButton loginButton = new JButton("Generate");
-        generateButton.add(loginButton);
+        JPanel generatePanel = new JPanel();
+        generatePanel.setLayout(new FlowLayout(CENTER, 8, 4));
+        JButton generateButton = new JButton("Generate");
+        generatePanel.add(generateButton);
 
         JPanel consolePanel = new JPanel();
         JTextArea consoleTextArea = new JTextArea();
@@ -60,7 +60,7 @@ public class GUI {
         scrollPane.setMaximumSize(new Dimension(765, 200));
         scrollPane.setPreferredSize(new Dimension(765, 200));
 
-        JFrame frame = new JFrame("File Reference Generator");
+        JFrame frame = new JFrame("File Path Reference Generator");
         frame.setLayout(new GridBagLayout());
         frame.setResizable(true);
         frame.setLocationRelativeTo(null);
@@ -69,12 +69,12 @@ public class GUI {
         GridBagConstraints rootFilePathPanelConstraints = new GridBagConstraints();
         rootFilePathPanelConstraints.gridx = 0;
         rootFilePathPanelConstraints.gridy = 0;
-        frame.add(rootFilePathPanel, rootFilePathPanelConstraints);
+        frame.add(rootDirectoryPathPanel, rootFilePathPanelConstraints);
 
         GridBagConstraints referencePathPanelConstraints = new GridBagConstraints();
         referencePathPanelConstraints.gridx = 0;
         referencePathPanelConstraints.gridy = 1;
-        frame.add(referencePathPanel, referencePathPanelConstraints);
+        frame.add(referenceScriptPathPanel, referencePathPanelConstraints);
 
         GridBagConstraints packageNamePanelConstraints = new GridBagConstraints();
         packageNamePanelConstraints.gridx = 0;
@@ -84,12 +84,12 @@ public class GUI {
         GridBagConstraints scriptNamePanelConstraints = new GridBagConstraints();
         scriptNamePanelConstraints.gridx = 0;
         scriptNamePanelConstraints.gridy = 3;
-        frame.add(scriptNamePanel, scriptNamePanelConstraints);
+        frame.add(referenceScriptNamePanel, scriptNamePanelConstraints);
 
         GridBagConstraints loginPanelConstraints = new GridBagConstraints();
         loginPanelConstraints.gridx = 0;
         loginPanelConstraints.gridy = 4;
-        frame.add(generateButton, loginPanelConstraints);
+        frame.add(generatePanel, loginPanelConstraints);
 
         GridBagConstraints consolePanelConstraints = new GridBagConstraints();
         consolePanelConstraints.gridx = 0;
@@ -107,22 +107,26 @@ public class GUI {
         System.setErr(printStream);
         System.setOut(printStream);
 
-        rootFilePathTextField.setText(getRootFilePath());
-        referencePathTextField.setText(getReferencePath());
+        rootDirectoryPathTextField.setText(getRootFilePath());
+        referenceScriptPathTextField.setText(getReferencePath());
         packageNameTextField.setText(getPackageName());
-        scriptNameTextField.setText(getScriptName());
-        loginButton.addActionListener(actionEvent -> {
+        referenceScriptNameTextField.setText(getScriptName());
+
+
+        generateButton.addActionListener(actionEvent -> {
             byteArrayOutputStream.reset();
-            putRootFilePath(rootFilePathTextField.getText());
-            putReferencePath(referencePathTextField.getText());
+
+            putRootFilePath(rootDirectoryPathTextField.getText());
+            putReferencePath(referenceScriptPathTextField.getText());
             putPackageName(packageNameTextField.getText());
-            putScriptName(scriptNameTextField.getText());
-            GENERATOR.generate(rootFilePathTextField.getText(), referencePathTextField.getText(), packageNameTextField.getText(), scriptNameTextField.getText());
+            putScriptName(referenceScriptNameTextField.getText());
+
+            GENERATOR.generate(rootDirectoryPathTextField.getText(), referenceScriptPathTextField.getText(), packageNameTextField.getText(), referenceScriptNameTextField.getText());
         });
 
         GENERATOR.start.add(() -> System.out.println("generate start"));
         GENERATOR.over.add(() -> System.out.println("generate over"));
-        referencePathTextField.addKeyListener(new KeyListener() {
+        referenceScriptPathTextField.addKeyListener(new KeyListener() {
             @Override
             public void keyTyped(KeyEvent keyEvent) {
             }
@@ -134,9 +138,9 @@ public class GUI {
             @Override
             public void keyReleased(KeyEvent keyEvent) {
                 String packageName;
-                packageName = tryGetPackageName(referencePathTextField.getText(), "com");
+                packageName = tryGetPackageName(referenceScriptPathTextField.getText(), "com");
                 if (packageName.equals("")) {
-                    packageName = tryGetPackageName(referencePathTextField.getText(), "org");
+                    packageName = tryGetPackageName(referenceScriptPathTextField.getText(), "org");
                 }
 
                 packageNameTextField.setText(packageName);

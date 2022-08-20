@@ -1,4 +1,4 @@
-package org.ryuu.file_reference.core;
+package org.ryuu.file_path_reference_generator.core;
 
 import java.io.BufferedReader;
 import java.io.File;

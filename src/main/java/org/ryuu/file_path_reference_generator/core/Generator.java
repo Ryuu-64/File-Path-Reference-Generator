@@ -1,4 +1,4 @@
-package org.ryuu.file_reference.core;
+package org.ryuu.file_path_reference_generator.core;
 
 import org.ryuu.functional.Action;
 
@@ -11,25 +11,25 @@ public class Generator {
     private final SuffixGenerator suffix = new SuffixGenerator();
     private final Content content = new Content();
     private Ignore ignore;
-    private String rootFilePath;
+    private String rootDirectoryPath;
     private int indentationDepth = 1;
 
-    public void generate(String rootFilePath, String referencePath, String packageName, String scriptName) {
-        if (rootFilePath.equals("")) {
+    public void generate(String rootDirectoryPath, String referenceScriptPath, String packageName, String referenceScriptName) {
+        if (rootDirectoryPath.equals("")) {
             throw new IllegalArgumentException("root file path can't be null");
         }
         start.invoke();
-        this.rootFilePath = formatRootFilePath(rootFilePath);
+        this.rootDirectoryPath = formatRootFilePath(rootDirectoryPath);
         content.addLine("package " + packageName + ";");
         content.addLine("");
-        content.addLine("public class FileReference {");
-        File rootFile = new File(this.rootFilePath);
+        content.addLine("public class " + referenceScriptName.replace(".java", "") + " {");
+        File rootFile = new File(this.rootDirectoryPath);
         if (!rootFile.exists()) {
-            throw new IllegalArgumentException("unable to get root file, root file path : " + this.rootFilePath);
+            throw new IllegalArgumentException("unable to get root file, root file path : " + this.rootDirectoryPath);
         }
         File[] files = rootFile.listFiles();
         if (files == null) {
-            throw new IllegalArgumentException("unable to get subfile in root file, root file path : " + this.rootFilePath);
+            throw new IllegalArgumentException("unable to get subfile in root file, root file path : " + this.rootDirectoryPath);
         }
         for (File file : files) {
             if (file.getName().equals(".fileignore")) {
@@ -47,12 +47,12 @@ public class Generator {
         addSuffix();
         suffix.clear();
         content.addLine("}");
-        content.write(referencePath, scriptName);
+        content.write(referenceScriptPath, referenceScriptName);
         over.invoke();
     }
 
     private void write(File file) {
-        String relativePath = getRelativePath(file, rootFilePath);
+        String relativePath = getRelativePath(file, rootDirectoryPath);
         boolean isIgnore = ignore != null && ignore.isIgnore(relativePath);
         String fieldName = FieldNameChecker.getLegal(file.getName());
         if (file.isDirectory()) {
