@@ -4,6 +4,8 @@ import org.ryuu.file_reference.core.Generator;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 
@@ -115,19 +117,48 @@ public class GUI {
             putReferencePath(referencePathTextField.getText());
             putPackageName(packageNameTextField.getText());
             putScriptName(scriptNameTextField.getText());
-            GENERATOR.generate(
-                    rootFilePathTextField.getText(),
-                    referencePathTextField.getText(),
-                    packageNameTextField.getText(),
-                    scriptNameTextField.getText()
-            );
+            GENERATOR.generate(rootFilePathTextField.getText(), referencePathTextField.getText(), packageNameTextField.getText(), scriptNameTextField.getText());
         });
 
-        GENERATOR.generateStart.add(() -> System.out.println("generate start"));
-        GENERATOR.generateOver.add(() -> System.out.println("generate over"));
+        GENERATOR.start.add(() -> System.out.println("generate start"));
+        GENERATOR.over.add(() -> System.out.println("generate over"));
+        referencePathTextField.addKeyListener(new KeyListener() {
+            @Override
+            public void keyTyped(KeyEvent keyEvent) {
+            }
+
+            @Override
+            public void keyPressed(KeyEvent keyEvent) {
+            }
+
+            @Override
+            public void keyReleased(KeyEvent keyEvent) {
+                String packageName;
+                packageName = tryGetPackageName(referencePathTextField.getText(), "com");
+                if (packageName.equals("")) {
+                    packageName = tryGetPackageName(referencePathTextField.getText(), "org");
+                }
+
+                packageNameTextField.setText(packageName);
+            }
+        });
 
         frame.pack();
         frame.setResizable(false);
         frame.setVisible(true);
+    }
+
+    private static String tryGetPackageName(String referencePath, String packageNameStart) {
+        if (referencePath.contains(packageNameStart)) {
+            referencePath = referencePath.replace("\\", "/");
+            referencePath = referencePath.replace("/", ".");
+
+            int index = referencePath.lastIndexOf(packageNameStart);
+
+            if (index != -1) {
+                return referencePath.substring(index);
+            }
+        }
+        return "";
     }
 }

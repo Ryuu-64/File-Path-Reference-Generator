@@ -6,8 +6,8 @@ import java.io.File;
 import java.util.Set;
 
 public class Generator {
-    public final Action generateStart = new Action();
-    public final Action generateOver = new Action();
+    public final Action start = new Action();
+    public final Action over = new Action();
     private final SuffixGenerator suffix = new SuffixGenerator();
     private final Content content = new Content();
     private Ignore ignore;
@@ -18,7 +18,7 @@ public class Generator {
         if (rootFilePath.equals("")) {
             throw new IllegalArgumentException("root file path can't be null");
         }
-        generateStart.invoke();
+        start.invoke();
         this.rootFilePath = formatRootFilePath(rootFilePath);
         content.addLine("package " + packageName + ";");
         content.addLine("");
@@ -48,7 +48,7 @@ public class Generator {
         suffix.clear();
         content.addLine("}");
         content.write(referencePath, scriptName);
-        generateOver.invoke();
+        over.invoke();
     }
 
     private void write(File file) {
