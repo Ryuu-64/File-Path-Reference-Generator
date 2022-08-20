@@ -1,57 +1,57 @@
-# File-Reference-Generator
+# File-Path-Reference-Generator
 
-## 这是什么？
+## what is this?
 
-此工具生成指定文件夹中所有文件的相对路径字符串引用 .java 文件
+This tool generates relative path string references to all files in the specified folder .java.
 
-## 有何好处？
+## What are the benefits?
 
-字符串**字面量**变为字符串**字段引用**的优点如下：
+The advantages of string **literal** to string **field reference** are as follows:
 
-1. 提升资源引用效率
-2. 降低资源引用错误概率
-3. 运行期错误变成了编译期错误
-4. 通过 IDE 得知资源的使用情况
+1. Improve resource citation efficiency
+2. Reduce the probability of resource reference errors
+3. Runtime errors become compile-time errors
+4. Know the resource usage through the IDE
 
-## 如何使用
+## how to use
 
-### 生成引用文件
+### Generate reference file
 
-输入指定的参数
+Enter the specified parameters
 
-1. 指定的根目录路径
-2. 文件路径引用脚本的生成路径
-3. 包名 (可选，若报名以 com 或 org 开头，将在输入生成路径时自动填入)
-4. 文件路径引用脚本的名称 (可选，默认名称为 FilePathReference.java)
+1. The specified root directory path
+2. The file path refers to the generation path of the script
+3. Package name (optional, if the registration starts with com or org, it will be filled in automatically when entering the generation path)
+4. The name of the file path reference script (optional, the default name is FilePathReference.java)
 
-按下 Generate
+Press Generate button
 
-### 配置生成忽略
+### Configure generation to ignore
 
-在根目录的文件夹中新建 .fileignore 文件
+Create a new .fileignore file in the root folder
 
-注释：以 \# 开头
+Comment: starts with \#
 
-通配符： \*
+Wildcard: \*
 
-不忽略：以 ! 开头
+Don't ignore: start with !
 
-忽略：文件的任意相对路径
+Ignore: any relative path to the file
 
-## 详细
+## details
 
-### 自动生成类的结构及特点
+### Structure and characteristics of automatically generated classes
 
-文件层级结构与文件浏览器一致，文件路径字段名与实际文件名一致，但存在以下例外：
+The file hierarchy is the same as the file browser, and the file path field name is the same as the actual file name, with the following exceptions:
 
-1. 文件夹路径引用以 $directory 为后缀 (字段名与静态内部类名一致在引用时容易引发歧义)
-2. 文件名不是合法的字段名
-   1. 以数字开头的文件字段名前添加 $ 符号
-   2. 其他不合法的字符被替换为 _
-3. 路径生成器将会自动识别文件后缀名，生成一个以 $suffix 为名的静态内部类记录所有的文件后缀名
+1. The folder path reference is suffixed with $directory (the field name is consistent with the static inner class name, which is easy to cause ambiguity when referencing)
+2. The filename is not a valid field name
+   1. Add a $ sign before the file field name that starts with a number
+   2. Other illegal characters will be replaced by _
+3. The path generator will automatically identify the file suffix and generate a static inner class named $suffix to record all file suffixes
 
-## 关于
+## about
 
-### 联系我
+### contact me
 
-有任何错误或建议，请联系[我 (Ryuu)](2357622935@qq.com)
+Any errors or suggestions, please contact [me (Ryuu)](2357622935@qq.com)
