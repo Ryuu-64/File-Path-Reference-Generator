@@ -17,6 +17,8 @@
 
 ### 生成引用文件
 
+下载 [生成器](https://github.com/Ryuu-64/File-Path-Reference-Generator/releases/download/0.1.0/File-Path-Reference-Generator-0.1.0.jar)
+
 输入指定的参数
 
 1. 指定的根目录路径

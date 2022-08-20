@@ -1,5 +1,7 @@
 # File-Path-Reference-Generator
 
+[简体中文](https://github.com/Ryuu-64/File-Path-Reference-Generator/blob/main/README_zh-cn.md)
+
 ## what is this?
 
 This tool generates relative path string references to all files in the specified folder .java.
@@ -16,6 +18,8 @@ The advantages of string **literal** to string **field reference** are as follow
 ## how to use
 
 ### Generate reference file
+
+download the [generator](https://github.com/Ryuu-64/File-Path-Reference-Generator/releases/download/0.1.0/File-Path-Reference-Generator-0.1.0.jar)
 
 Enter the specified parameters
 
