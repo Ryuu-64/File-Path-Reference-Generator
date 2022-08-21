@@ -72,7 +72,7 @@ The file hierarchy is the same as the file browser, and the file path field name
 
 1. The folder path reference is suffixed with $directory (the field name is consistent with the static inner class name, which is easy to cause ambiguity when referencing)
 2. The filename is not a valid field name
-   1. Add a $ sign before the file field name that starts with a number
+   1. Add a $ sign to file field names that start with a number or name [java keywords, reserved words, or special literals](https://docs.oracle.com/javase/tutorial/java/nutsandbolts/_keywords.html).
    2. Other illegal characters will be replaced by _
 3. The path generator will automatically identify the file suffix and generate a static inner class named $suffix to record all file suffixes
 

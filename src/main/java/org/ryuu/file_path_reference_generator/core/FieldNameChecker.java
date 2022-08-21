@@ -7,7 +7,7 @@ public class FieldNameChecker {
     private FieldNameChecker() {
     }
 
-    private static final HashSet<String> reservedWords = new HashSet<String>() {{
+    private static final HashSet<String> excludeIdentifiers = new HashSet<String>() {{
         add("abstract");
         add("assert");
         add("boolean");
@@ -64,7 +64,7 @@ public class FieldNameChecker {
     }};
 
     public static String getLegal(String name) {
-        if (reservedWords.contains(name)) {
+        if (excludeIdentifiers.contains(name)) {
             return "$" + name;
         }
         String legalName = name.replaceAll("[^\\da-zA-Z_$]", "_");
