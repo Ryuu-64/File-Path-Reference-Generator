@@ -51,12 +51,18 @@ The advantages of string **literal** to string **field reference** are as follow
    
    task createFilePathReference {
        doLast {
-           Generator.generate("File root directory", "Generated script name", "Script package name")
+           Generator.generate("file root directory path", "script generation path", "script package name")
        }
    }
    ````
 
- Run the createFilePathReference task
+   Run the createFilePathReference task
+
+   If you need to customize the script name, please use the following API:
+
+   ```java
+   Generator.generate("file root directory path", "script generation path", "script package name", "script name")
+   ```
 
 ## details
 

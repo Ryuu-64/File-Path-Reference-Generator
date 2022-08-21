@@ -49,12 +49,18 @@
    
    task createFilePathReference {
        doLast {
-           Generator.generate("文件根目录", "生成的脚本名", "脚本的包名")
+           Generator.generate("文件根目录", "脚本的生成路径", "脚本的包名")
        }
    }
    ```
 
-​		运行 createFilePathReference task
+   运行 createFilePathReference
+
+   若需要自定义脚本名称请使用如下 API：
+   
+   ```java
+   Generator.generate("文件根目录", "脚本的生成路径", "脚本的包名", "脚本名称")
+   ```
 
 ### 配置生成忽略
 
