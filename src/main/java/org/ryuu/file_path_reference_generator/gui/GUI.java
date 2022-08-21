@@ -110,7 +110,6 @@ public class GUI {
         packageNameTextField.setText(getPackageName());
         referenceScriptNameTextField.setText(getScriptName());
 
-
         generateButton.addActionListener(actionEvent -> {
             byteArrayOutputStream.reset();
 

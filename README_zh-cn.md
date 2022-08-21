@@ -1,5 +1,7 @@
 # File-Path-Reference-Generator
 
+[![](https://jitpack.io/v/Ryuu-64/File-Path-Reference-Generator.svg)](https://jitpack.io/#Ryuu-64/File-Path-Reference-Generator)
+
 ## 这是什么？
 
 此工具生成指定文件夹中所有文件的相对路径字符串引用 .java 文件

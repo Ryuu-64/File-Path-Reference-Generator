@@ -14,6 +14,10 @@ public class Generator {
     private static String rootDirectoryPath;
     private static int indentationDepth = 1;
 
+    public static void generate(String rootDirectoryPath, String referenceScriptPath, String packageName) {
+        generate(rootDirectoryPath, referenceScriptPath, packageName, "FilePathReference.java");
+    }
+
     public static void generate(String rootDirectoryPath, String referenceScriptPath, String packageName, String referenceScriptName) {
         if (rootDirectoryPath.equals("")) {
             throw new IllegalArgumentException("root file path can't be null");

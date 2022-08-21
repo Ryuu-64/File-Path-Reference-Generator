@@ -1,5 +1,7 @@
 # File-Path-Reference-Generator
 
+[![](https://jitpack.io/v/Ryuu-64/File-Path-Reference-Generator.svg)](https://jitpack.io/#Ryuu-64/File-Path-Reference-Generator)
+
 [简体中文](https://github.com/Ryuu-64/File-Path-Reference-Generator/blob/main/README_zh-cn.md)
 
 ## what is this?
