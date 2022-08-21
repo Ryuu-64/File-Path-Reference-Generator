@@ -19,30 +19,44 @@ The advantages of string **literal** to string **field reference** are as follow
 
 ## how to use
 
-### Generate reference file
+1. executable jar
 
-download the [generator](https://github.com/Ryuu-64/File-Path-Reference-Generator/releases/download/0.1.0/File-Path-Reference-Generator-0.1.0.jar)
+   Download [Generator](https://github.com/Ryuu-64/File-Path-Reference-Generator/releases/)
 
-Enter the specified parameters
+   Enter the specified parameters:
 
-1. The specified root directory path
-2. The file path refers to the generation path of the script
-3. Package name (optional, if the registration starts with com or org, it will be filled in automatically when entering the generation path)
-4. The name of the file path reference script (optional, the default name is FilePathReference.java)
+   1. The specified root directory path
+   2. The file path refers to the generation path of the script
+   3. Package name (optional, if the package name starts with com or org, it will be filled in automatically when entering the generated path)
+   4. The name of the file path reference script (optional, the default name is FilePathReference.java)
 
-Press Generate button
+   Press the Generate button
 
-### Configure generation to ignore
+2. Gradle
 
-Create a new .fileignore file in the root folder
+   Write the following code in build.gradle
 
-Comment: starts with \#
+   ````java
+   buildscript {
+       repositories {
+           maven { url 'https://jitpack.io' }
+   
+       }
+       dependencies {
+           classpath 'com.github.Ryuu-64:File-Path-Reference-Generator:Tag' // Enter the Tag you need
+       }
+   }
+   
+   import org.ryuu.file_path_reference_generator.core.Generator
+   
+   task createFilePathReference {
+       doLast {
+           Generator.generate("File root directory", "Generated script name", "Script package name")
+       }
+   }
+   ````
 
-Wildcard: \*
-
-Don't ignore: start with !
-
-Ignore: any relative path to the file
+ Run the createFilePathReference task
 
 ## details
 

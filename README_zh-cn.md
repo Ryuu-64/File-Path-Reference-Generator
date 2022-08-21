@@ -17,18 +17,44 @@
 
 ## 如何使用
 
-### 生成引用文件
+1. executable jar
 
-下载 [生成器](https://github.com/Ryuu-64/File-Path-Reference-Generator/releases/download/0.1.0/File-Path-Reference-Generator-0.1.0.jar)
+   下载 [生成器](https://github.com/Ryuu-64/File-Path-Reference-Generator/releases/)
 
-输入指定的参数
+   输入指定的参数：
 
-1. 指定的根目录路径
-2. 文件路径引用脚本的生成路径
-3. 包名 (可选，若报名以 com 或 org 开头，将在输入生成路径时自动填入)
-4. 文件路径引用脚本的名称 (可选，默认名称为 FilePathReference.java)
+   1. 指定的根目录路径
+   2. 文件路径引用脚本的生成路径
+   3. 包名 (可选，若包名以 com 或 org 开头，将在输入生成路径时自动填入)
+   4. 文件路径引用脚本的名称 (可选，默认名称为 FilePathReference.java)
 
-按下 Generate 按钮
+   按下 Generate 按钮
+
+2. Gradle
+
+   在 build.gradle 中写入以下代码
+
+   ```java
+   buildscript {
+       repositories {
+           maven { url 'https://jitpack.io' }
+   
+       }
+       dependencies {
+           classpath 'com.github.Ryuu-64:File-Path-Reference-Generator:Tag' // 输入您需要的 Tag
+       }
+   }
+   
+   import org.ryuu.file_path_reference_generator.core.Generator
+   
+   task createFilePathReference {
+       doLast {
+           Generator.generate("文件根目录", "生成的脚本名", "脚本的包名")
+       }
+   }
+   ```
+
+​		运行 createFilePathReference task
 
 ### 配置生成忽略
 
