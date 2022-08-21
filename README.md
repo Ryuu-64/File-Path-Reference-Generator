@@ -4,7 +4,7 @@
 
 [简体中文](https://github.com/Ryuu-64/File-Path-Reference-Generator/blob/main/README_zh-cn.md)
 
-## what is this?
+## What is this?
 
 This tool generates relative path string references to all files in the specified folder .java.
 
@@ -17,7 +17,7 @@ The advantages of string **literal** to string **field reference** are as follow
 3. Runtime errors become compile-time errors
 4. Know the resource usage through the IDE
 
-## how to use
+## How to use
 
 1. executable jar
 
@@ -64,7 +64,7 @@ The advantages of string **literal** to string **field reference** are as follow
    Generator.generate("file root directory path", "script generation path", "script package name", "script name")
    ```
 
-## details
+## Details
 
 ### Structure and characteristics of automatically generated classes
 
@@ -76,8 +76,8 @@ The file hierarchy is the same as the file browser, and the file path field name
    2. Other illegal characters will be replaced by _
 3. The path generator will automatically identify the file suffix and generate a static inner class named $suffix to record all file suffixes
 
-## about
+## About
 
-### contact me
+### Contact me
 
-Any errors or suggestions, please contact [me (Ryuu)](2357622935@qq.com)
+Any errors or suggestions, please contact [me (Ryuu)](64ryuu@gmail.com)
