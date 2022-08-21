@@ -6,30 +6,30 @@ import java.io.File;
 import java.util.Set;
 
 public class Generator {
-    public final Action start = new Action();
-    public final Action over = new Action();
-    private final SuffixGenerator suffix = new SuffixGenerator();
-    private final Content content = new Content();
-    private Ignore ignore;
-    private String rootDirectoryPath;
-    private int indentationDepth = 1;
+    public static final Action start = new Action();
+    public static final Action over = new Action();
+    private static final SuffixGenerator suffix = new SuffixGenerator();
+    private static final Content content = new Content();
+    private static Ignore ignore;
+    private static String rootDirectoryPath;
+    private static int indentationDepth = 1;
 
-    public void generate(String rootDirectoryPath, String referenceScriptPath, String packageName, String referenceScriptName) {
+    public static void generate(String rootDirectoryPath, String referenceScriptPath, String packageName, String referenceScriptName) {
         if (rootDirectoryPath.equals("")) {
             throw new IllegalArgumentException("root file path can't be null");
         }
         start.invoke();
-        this.rootDirectoryPath = formatRootFilePath(rootDirectoryPath);
+        Generator.rootDirectoryPath = formatRootFilePath(rootDirectoryPath);
         content.addLine("package " + packageName + ";");
         content.addLine("");
         content.addLine("public class " + referenceScriptName.replace(".java", "") + " {");
-        File rootFile = new File(this.rootDirectoryPath);
+        File rootFile = new File(Generator.rootDirectoryPath);
         if (!rootFile.exists()) {
-            throw new IllegalArgumentException("unable to get root file, root file path : " + this.rootDirectoryPath);
+            throw new IllegalArgumentException("unable to get root file, root file path : " + Generator.rootDirectoryPath);
         }
         File[] files = rootFile.listFiles();
         if (files == null) {
-            throw new IllegalArgumentException("unable to get subfile in root file, root file path : " + this.rootDirectoryPath);
+            throw new IllegalArgumentException("unable to get subfile in root file, root file path : " + Generator.rootDirectoryPath);
         }
         for (File file : files) {
             if (file.getName().equals(".fileignore")) {
@@ -51,7 +51,7 @@ public class Generator {
         over.invoke();
     }
 
-    private void write(File file) {
+    private static void write(File file) {
         String relativePath = getRelativePath(file, rootDirectoryPath);
         boolean isIgnore = ignore != null && ignore.isIgnore(relativePath);
         String fieldName = FieldNameChecker.getLegal(file.getName());
@@ -65,14 +65,14 @@ public class Generator {
         }
     }
 
-    private String getRelativePath(File file, String prefix) {
+    private static String getRelativePath(File file, String prefix) {
         String path = file.getPath();
         path = path.replace(prefix, "");
         path = path.replace('\\', '/');
         return file.isDirectory() ? path + "/" : path;
     }
 
-    private String formatRootFilePath(String path) {
+    private static String formatRootFilePath(String path) {
         path = path.replace('/', '\\');
         if (!path.endsWith("\\")) {
             path = path + "\\";
@@ -80,14 +80,14 @@ public class Generator {
         return path;
     }
 
-    private void addDirectory(String fieldName, String relativePath) {
+    private static void addDirectory(String fieldName, String relativePath) {
         if (content.getLine().endsWith("}")) {
             content.addLineWithTab("", indentationDepth);
         }
         content.addLineWithTab("public static final String " + fieldName + "$directory = \"" + relativePath + "\";", indentationDepth);
     }
 
-    private void addSubfile(File file) {
+    private static void addSubfile(File file) {
         content.addLineWithTab("", indentationDepth);
         content.addLineWithTab("public static class " + FieldNameChecker.getLegal(file.getName()) + " {", indentationDepth);
         indentationDepth++;
@@ -103,7 +103,7 @@ public class Generator {
         content.removeIfEmptyStaticClass();
     }
 
-    private void addFile(String fieldName, String relativePath) {
+    private static void addFile(String fieldName, String relativePath) {
         if (content.getLine().endsWith("}")) {
             content.addLineWithTab("", indentationDepth);
         }
@@ -111,7 +111,7 @@ public class Generator {
         content.addLineWithTab("public static final String " + fieldName + " = \"" + relativePath + "\";", indentationDepth);
     }
 
-    private void addSuffix() {
+    private static void addSuffix() {
         Set<String> suffixes = suffix.get();
         if (suffixes.size() == 0) {
             return;

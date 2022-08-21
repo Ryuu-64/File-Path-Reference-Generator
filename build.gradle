@@ -2,8 +2,8 @@ plugins {
     id 'java'
 }
 
-group 'pers.ryuu'
-version '0.1.0'
+group 'org.ryuu'
+version '0.1.1'
 
 repositories {
     mavenCentral()

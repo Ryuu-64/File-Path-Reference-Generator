@@ -15,8 +15,6 @@ import static javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED;
 import static org.ryuu.file_path_reference_generator.gui.Persistence.*;
 
 public class GUI {
-    private static final Generator GENERATOR = new Generator();
-
     public static void main(String[] args) {
         JPanel rootDirectoryPathPanel = new JPanel();
         rootDirectoryPathPanel.setLayout(new FlowLayout(CENTER, 8, 4));
@@ -121,11 +119,12 @@ public class GUI {
             putPackageName(packageNameTextField.getText());
             putScriptName(referenceScriptNameTextField.getText());
 
-            GENERATOR.generate(rootDirectoryPathTextField.getText(), referenceScriptPathTextField.getText(), packageNameTextField.getText(), referenceScriptNameTextField.getText());
+            Generator.generate(rootDirectoryPathTextField.getText(), referenceScriptPathTextField.getText(), packageNameTextField.getText(), referenceScriptNameTextField.getText());
         });
 
-        GENERATOR.start.add(() -> System.out.println("generate start"));
-        GENERATOR.over.add(() -> System.out.println("generate over"));
+        Generator.start.add(() -> System.out.println("generate start"));
+        Generator.over.add(() -> System.out.println("generate over"));
+
         referenceScriptPathTextField.addKeyListener(new KeyListener() {
             @Override
             public void keyTyped(KeyEvent keyEvent) {
