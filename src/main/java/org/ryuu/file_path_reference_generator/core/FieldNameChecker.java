@@ -3,6 +3,8 @@ package org.ryuu.file_path_reference_generator.core;
 import java.util.HashSet;
 import java.util.regex.Pattern;
 
+import static java.util.regex.Pattern.*;
+
 public class FieldNameChecker {
     private FieldNameChecker() {
     }
@@ -68,7 +70,7 @@ public class FieldNameChecker {
             return "$" + name;
         }
         String legalName = name.replaceAll("[^\\da-zA-Z_$]", "_");
-        if (Pattern.matches("^[^a-zA-Z_$].*$", legalName)) {
+        if (matches("^[^a-zA-Z_$].*$", legalName)) {
             return "$" + legalName;
         } else {
             return legalName;

@@ -5,6 +5,8 @@ import org.ryuu.functional.Action;
 import java.io.File;
 import java.util.Set;
 
+import static org.ryuu.file_path_reference_generator.core.FieldNameChecker.*;
+
 public class Generator {
     public static final Action start = new Action();
     public static final Action over = new Action();
@@ -58,14 +60,13 @@ public class Generator {
     private static void write(File file) {
         String relativePath = getRelativePath(file, rootDirectoryPath);
         boolean isIgnore = ignore != null && ignore.isIgnore(relativePath);
-        String fieldName = FieldNameChecker.getLegal(file.getName());
         if (file.isDirectory()) {
             if (!isIgnore) {
-                addDirectory(fieldName, relativePath);
+                addDirectory(getLegal(file.getName() + "/"), relativePath);
             }
             addSubfile(file);
         } else if (!isIgnore) {
-            addFile(fieldName, relativePath);
+            addFile(getLegal(file.getName()), relativePath);
         }
     }
 
@@ -88,12 +89,12 @@ public class Generator {
         if (content.getLine().endsWith("}")) {
             content.addLineWithTab("", indentationDepth);
         }
-        content.addLineWithTab("public static final String " + fieldName + "$directory = \"" + relativePath + "\";", indentationDepth);
+        content.addLineWithTab("public static final String " + fieldName + " = \"" + relativePath + "\";", indentationDepth);
     }
 
     private static void addSubfile(File file) {
         content.addLineWithTab("", indentationDepth);
-        content.addLineWithTab("public static class " + FieldNameChecker.getLegal(file.getName()) + " {", indentationDepth);
+        content.addLineWithTab("public static class " + getLegal(file.getName()) + " {", indentationDepth);
         indentationDepth++;
         File[] files = file.listFiles();
         if (files == null) {
@@ -125,7 +126,7 @@ public class Generator {
         content.addLineWithTab("public static class $suffix {", indentationDepth);
         indentationDepth++;
         for (String suffix : suffixes) {
-            content.addLineWithTab("public static final String " + FieldNameChecker.getLegal(suffix) + " = \"" + suffix + "\";", indentationDepth);
+            content.addLineWithTab("public static final String " + getLegal(suffix) + " = \"" + suffix + "\";", indentationDepth);
         }
         indentationDepth--;
         content.addLineWithTab("}", indentationDepth);
