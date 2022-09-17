@@ -1,7 +1,6 @@
-package org.ryuu.file_path_reference_generator.core;
+package org.ryuu.filepathreferencegenerator.core;
 
 import java.util.HashSet;
-import java.util.regex.Pattern;
 
 import static java.util.regex.Pattern.*;
 

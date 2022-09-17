@@ -45,7 +45,7 @@
        }
    }
    
-   import org.ryuu.file_path_reference_generator.core.Generator
+   import org.ryuu.filepathreferencegenerator.core.Generator
    
    task createFilePathReference {
        doLast {
@@ -80,14 +80,15 @@
 
 文件层级结构与文件浏览器一致，文件路径字段名与实际文件名一致，但存在以下例外：
 
-1. 文件夹路径引用以 _ 为后缀 (文件夹路径名称带有 / 后缀)
+1. 文件夹路径字段名有 $ 前缀
 2. 文件名不是合法的字段名
-   1. 以数字开头或以 [java 关键字、保留字或特殊字面量](https://docs.oracle.com/javase/tutorial/java/nutsandbolts/_keywords.html) 为名的文件字段名前添加 $ 符号
+   1. 以数字开头或以 [java 关键字、保留字或特殊字面量](https://docs.oracle.com/javase/tutorial/java/nutsandbolts/_keywords.html) 为名的文件字段名有 $ 前缀
    2. 其他不合法的字符被替换为 _
-3. 路径生成器将会自动识别文件后缀名，生成一个以 $suffix 为名的静态内部类记录所有的文件后缀名
+3. 路径生成器将会记录文件后缀名，在最后生成一个以 $SUFFIX 为名的静态内部类
 
 ## 关于
 
 ### 联系我
 
 有任何错误或建议，请联系[我 (Ryuu)](64ryuu@gmail.com)
+

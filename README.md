@@ -47,7 +47,7 @@ The advantages of string **literal** to string **field reference** are as follow
        }
    }
    
-   import org.ryuu.file_path_reference_generator.core.Generator
+   import org.ryuu.filepathreferencegenerator.core.Generator
    
    task createFilePathReference {
        doLast {
@@ -70,11 +70,11 @@ The advantages of string **literal** to string **field reference** are as follow
 
 The file hierarchy is the same as the file browser, and the file path field name is the same as the actual file name, with the following exceptions:
 
-1. Folder path references are suffixed with _ (folder path names are suffixed with /)
-2. File name is not a valid field name
-   1. Add a $ sign to file field names that start with a number or name [java keywords, reserved words, or special literals](https://docs.oracle.com/javase/tutorial/java/nutsandbolts/_keywords.html).
-   2. Other illegal characters will be replaced by _
-3. The path generator will automatically identify the file suffix and generate a static inner class named $suffix to record all file suffixes
+1. The folder path field names have a $ prefix
+2. The filename is not a valid field name
+   1. File field names starting with a number or named [java keywords, reserved words, or special literals](https://docs.oracle.com/javase/tutorial/java/nutsandbolts/_keywords.html) have $ prefix
+   2. Other illegal characters are replaced with _
+3. The path generator will record the file suffix and generate a static inner class named $SUFFIX at the end
 
 ## About
 

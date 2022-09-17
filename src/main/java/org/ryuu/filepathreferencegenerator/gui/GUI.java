@@ -1,6 +1,6 @@
-package org.ryuu.file_path_reference_generator.gui;
+package org.ryuu.filepathreferencegenerator.gui;
 
-import org.ryuu.file_path_reference_generator.core.Generator;
+import org.ryuu.filepathreferencegenerator.core.Generator;
 
 import javax.swing.*;
 import java.awt.*;
@@ -12,9 +12,12 @@ import java.io.PrintStream;
 import static java.awt.FlowLayout.CENTER;
 import static javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED;
 import static javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED;
-import static org.ryuu.file_path_reference_generator.gui.Persistence.*;
+import static org.ryuu.filepathreferencegenerator.gui.Persistence.*;
 
 public class GUI {
+    private GUI() {
+    }
+
     public static void main(String[] args) {
         JPanel rootDirectoryPathPanel = new JPanel();
         rootDirectoryPathPanel.setLayout(new FlowLayout(CENTER, 8, 4));
@@ -121,8 +124,8 @@ public class GUI {
             Generator.generate(rootDirectoryPathTextField.getText(), referenceScriptPathTextField.getText(), packageNameTextField.getText(), referenceScriptNameTextField.getText());
         });
 
-        Generator.start.add(() -> System.out.println("generate start"));
-        Generator.over.add(() -> System.out.println("generate over"));
+        Generator.onStart.add(() -> System.out.println("generate start"));
+        Generator.onOver.add(() -> System.out.println("generate over"));
 
         referenceScriptPathTextField.addKeyListener(new KeyListener() {
             @Override

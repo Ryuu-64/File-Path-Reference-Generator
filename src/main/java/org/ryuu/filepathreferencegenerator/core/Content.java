@@ -1,4 +1,4 @@
-package org.ryuu.file_path_reference_generator.core;
+package org.ryuu.filepathreferencegenerator.core;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -44,7 +44,7 @@ public class Content {
         }
     }
 
-    public void write(String path, String name) {
+    public void flush(String path, String name) {
         try (FileWriter fileWriter = new FileWriter(path + "/" + name)) {
             try (BufferedWriter bufferedWriter = new BufferedWriter(fileWriter)) {
                 for (String line : content) {

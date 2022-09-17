@@ -1,8 +1,13 @@
-package org.ryuu.file_path_reference_generator.gui;
+package org.ryuu.filepathreferencegenerator.gui;
+
+import org.ryuu.filepathreferencegenerator.core.Generator;
 
 import java.util.prefs.Preferences;
 
 public class Persistence {
+    private Persistence() {
+    }
+
     private static final Preferences preferences = Preferences.userNodeForPackage(GUI.class);
 
     public static String getRootFilePath() {
@@ -18,7 +23,7 @@ public class Persistence {
     }
 
     public static String getScriptName() {
-        return preferences.get("scriptName", "FilePathReference.java");
+        return preferences.get("scriptName", Generator.DEFAULT_REFERENCE_SCRIPT_NAME);
     }
 
     public static void putRootFilePath(String path) {

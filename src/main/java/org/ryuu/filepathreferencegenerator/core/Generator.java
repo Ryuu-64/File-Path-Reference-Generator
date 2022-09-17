@@ -1,30 +1,31 @@
-package org.ryuu.file_path_reference_generator.core;
+package org.ryuu.filepathreferencegenerator.core;
 
 import org.ryuu.functional.Action;
 
 import java.io.File;
 import java.util.Set;
 
-import static org.ryuu.file_path_reference_generator.core.FieldNameChecker.*;
+import static org.ryuu.filepathreferencegenerator.core.FieldNameChecker.*;
 
 public class Generator {
-    public static final Action start = new Action();
-    public static final Action over = new Action();
+    public static final String DEFAULT_REFERENCE_SCRIPT_NAME = "FilePathReference.java";
+    public static final Action onStart = new Action();
+    public static final Action onOver = new Action();
     private static final SuffixGenerator suffix = new SuffixGenerator();
     private static final Content content = new Content();
-    private static Ignore ignore;
+    private static FileIgnore fileIgnore;
     private static String rootDirectoryPath;
     private static int indentationDepth = 1;
 
     public static void generate(String rootDirectoryPath, String referenceScriptPath, String packageName) {
-        generate(rootDirectoryPath, referenceScriptPath, packageName, "FilePathReference.java");
+        generate(rootDirectoryPath, referenceScriptPath, packageName, DEFAULT_REFERENCE_SCRIPT_NAME);
     }
 
     public static void generate(String rootDirectoryPath, String referenceScriptPath, String packageName, String referenceScriptName) {
         if (rootDirectoryPath.equals("")) {
             throw new IllegalArgumentException("root file path can't be null");
         }
-        start.invoke();
+        onStart.invoke();
         Generator.rootDirectoryPath = formatRootFilePath(rootDirectoryPath);
         content.addLine("package " + packageName + ";");
         content.addLine("");
@@ -38,14 +39,14 @@ public class Generator {
             throw new IllegalArgumentException("unable to get subfile in root file, root file path : " + Generator.rootDirectoryPath);
         }
         for (File file : files) {
-            if (file.getName().equals(".fileignore")) {
-                ignore = new Ignore(file);
+            if (file.getName().equals(FileIgnore.FILE_NAME)) {
+                fileIgnore = new FileIgnore(file);
                 break;
             }
         }
 
         for (File file : files) {
-            if (!file.getName().equals(".fileignore")) {
+            if (!file.getName().equals(FileIgnore.FILE_NAME)) {
                 write(file);
             }
         }
@@ -53,13 +54,13 @@ public class Generator {
         addSuffix();
         suffix.clear();
         content.addLine("}");
-        content.write(referenceScriptPath, referenceScriptName);
-        over.invoke();
+        content.flush(referenceScriptPath, referenceScriptName);
+        onOver.invoke();
     }
 
     private static void write(File file) {
         String relativePath = getRelativePath(file, rootDirectoryPath);
-        boolean isIgnore = ignore != null && ignore.isIgnore(relativePath);
+        boolean isIgnore = fileIgnore != null && fileIgnore.isIgnore(relativePath);
         if (file.isDirectory()) {
             if (!isIgnore) {
                 addDirectory(getLegal(file.getName() + "/"), relativePath);
@@ -89,7 +90,8 @@ public class Generator {
         if (content.getLine().endsWith("}")) {
             content.addLineWithTab("", indentationDepth);
         }
-        content.addLineWithTab("public static final String " + fieldName + " = \"" + relativePath + "\";", indentationDepth);
+        fieldName = fieldName.substring(0, fieldName.length() - 1);
+        content.addLineWithTab("public static final String $" + fieldName + " = \"" + relativePath + "\";", indentationDepth);
     }
 
     private static void addSubfile(File file) {
@@ -123,7 +125,7 @@ public class Generator {
         }
         indentationDepth = 1;
         content.addLineWithTab("", indentationDepth);
-        content.addLineWithTab("public static class $suffix {", indentationDepth);
+        content.addLineWithTab("public static class $SUFFIX {", indentationDepth);
         indentationDepth++;
         for (String suffix : suffixes) {
             content.addLineWithTab("public static final String " + getLegal(suffix) + " = \"" + suffix + "\";", indentationDepth);
