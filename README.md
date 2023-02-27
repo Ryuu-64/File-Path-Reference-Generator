@@ -1,4 +1,4 @@
-# File-Path-Reference-Generator
+# Path-Generator
 
 [![](https://jitpack.io/v/Ryuu-64/File-Path-Reference-Generator.svg)](https://jitpack.io/#Ryuu-64/File-Path-Reference-Generator)
 
@@ -47,7 +47,7 @@ The advantages of string **literal** to string **field reference** are as follow
        }
    }
    
-   import org.ryuu.filepathreferencegenerator.core.Generator
+   import org.ryuu.pathgenerator.Generator
    
    task createFilePathReference {
        doLast {

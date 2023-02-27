@@ -45,7 +45,7 @@
        }
    }
    
-   import org.ryuu.filepathreferencegenerator.core.Generator
+   import org.ryuu.pathgenerator.Generator
    
    task createFilePathReference {
        doLast {
