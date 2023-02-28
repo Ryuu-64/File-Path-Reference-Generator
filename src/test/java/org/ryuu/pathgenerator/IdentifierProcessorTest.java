@@ -1,17 +1,16 @@
 package org.ryuu.pathgenerator;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import javax.lang.model.SourceVersion;
 import java.util.HashSet;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 class IdentifierProcessorTest {
 
     @Test
     void getLegal() {
-        HashSet<String> illegalIdentifiers = new HashSet<String>() {{
+        HashSet<String> reservedWords = new HashSet<String>() {{
             add("abstract");
             add("assert");
             add("boolean");
@@ -21,7 +20,6 @@ class IdentifierProcessorTest {
             add("catch");
             add("char");
             add("class");
-            add("const");
             add("continue");
             add("default");
             add("do");
@@ -33,7 +31,6 @@ class IdentifierProcessorTest {
             add("finally");
             add("float");
             add("for");
-            add("goto");
             add("if");
             add("implements");
             add("import");
@@ -62,13 +59,16 @@ class IdentifierProcessorTest {
             add("void");
             add("volatile");
             add("while");
-            add("true");
+            add("const");
+            add("goto");
             add("false");
             add("null");
+            add("true");
         }};
 
-        for (String identifiers : illegalIdentifiers) {
-            System.out.println(SourceVersion.isKeyword("$" + identifiers));
+        for (String reservedWord : reservedWords) {
+            boolean isKeyword = SourceVersion.isKeyword(reservedWord);
+            Assertions.assertTrue(isKeyword);
         }
     }
 }

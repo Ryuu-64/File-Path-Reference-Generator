@@ -3,6 +3,8 @@ package org.ryuu.pathgenerator;
 import java.lang.String;
 
 public final class $resources {
+  public static final String _fileignore = "src/test/resources/.fileignore";
+
   public static final String $directory1 = "src/test/resources/directory1";
 
   public static final String $directory2 = "src/test/resources/directory2";
@@ -22,15 +24,6 @@ public final class $resources {
   public static final String testfile5_txt = "src/test/resources/testfile5.txt";
 
   public static final class directory1 {
-    public static final String testfile1_txt = "src/test/resources/directory1/testfile1.txt";
-
-    public static final String testfile2_txt = "src/test/resources/directory1/testfile2.txt";
-
-    public static final String testfile3_txt = "src/test/resources/directory1/testfile3.txt";
-
-    public static final String testfile4_txt = "src/test/resources/directory1/testfile4.txt";
-
-    public static final String testfile5_txt = "src/test/resources/directory1/testfile5.txt";
   }
 
   public static final class directory2 {
@@ -75,15 +68,6 @@ public final class $resources {
     public static final String testfile5_txt = "src/test/resources/directory4/testfile5.txt";
 
     public static final class directory1 {
-      public static final String testfile1_txt = "src/test/resources/directory4/directory1/testfile1.txt";
-
-      public static final String testfile2_txt = "src/test/resources/directory4/directory1/testfile2.txt";
-
-      public static final String testfile3_txt = "src/test/resources/directory4/directory1/testfile3.txt";
-
-      public static final String testfile4_txt = "src/test/resources/directory4/directory1/testfile4.txt";
-
-      public static final String testfile5_txt = "src/test/resources/directory4/directory1/testfile5.txt";
     }
 
     public static final class directory2 {

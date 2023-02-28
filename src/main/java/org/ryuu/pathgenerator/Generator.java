@@ -13,7 +13,7 @@ import java.nio.file.Paths;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static javax.lang.model.element.Modifier.*;
-import static org.ryuu.pathgenerator.FileIgnore.*;
+import static org.ryuu.pathgenerator.FileIgnore.FILE_NAME;
 
 public class Generator {
     private Path sourcePath;
@@ -67,7 +67,7 @@ public class Generator {
         }
         try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(directoryPath)) {
             for (Path innerPath : directoryStream) {
-                if (!fileIgnore.isIgnorePath(innerPath.toString())) {
+                if (!fileIgnore.isIgnorePath(innerPath.toString().replace("\\", "/"))) {
                     classBuilder.addField(createField(innerPath));
                 }
 

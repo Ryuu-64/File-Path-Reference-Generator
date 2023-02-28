@@ -1,6 +1,7 @@
 package org.ryuu.pathgenerator;
 
-import java.io.BufferedReader;
+import org.apache.commons.io.FileUtils;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -8,6 +9,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.regex.Pattern;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 public class FileIgnore {
     public static final String FILE_NAME = ".fileignore";
@@ -17,34 +20,34 @@ public class FileIgnore {
     public FileIgnore() {
     }
 
-    public FileIgnore(Path ignoreFile) {
-        Objects.requireNonNull(ignoreFile, "The ignore file path cannot be null.");
+    public FileIgnore(Path ignore) {
+        Objects.requireNonNull(ignore, "The ignore file path cannot be null.");
 
-        ignoreFile = ignoreFile.toAbsolutePath().normalize();
+        ignore = ignore.toAbsolutePath().normalize();
 
-        if (!Files.exists(ignoreFile)) {
-            throw new IllegalArgumentException("The ignore file does not exist: " + ignoreFile);
+        if (!Files.exists(ignore)) {
+            throw new IllegalArgumentException("The ignore file does not exist: " + ignore);
         }
 
-        if (!ignoreFile.getFileName().toString().equals(FILE_NAME)) {
-            throw new IllegalArgumentException("The ignore file has an invalid name: " + ignoreFile.getFileName());
+        if (!ignore.getFileName().toString().equals(FILE_NAME)) {
+            throw new IllegalArgumentException("The ignore file has an invalid name: " + ignore.getFileName());
         }
 
-        try (BufferedReader reader = Files.newBufferedReader(ignoreFile)) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                if (line.trim().isEmpty() || line.startsWith("#")) {
+        try {
+            List<String> ignoreLines = FileUtils.readLines(ignore.toFile(), UTF_8);
+            for (String ignoreLine : ignoreLines) {
+                if (ignoreLine.trim().isEmpty() || ignoreLine.startsWith("#")) {
                     continue;
                 }
 
-                if (line.startsWith("!")) {
-                    notIgnorePatterns.add(getIgnorePattern(line));
+                if (ignoreLine.startsWith("!")) {
+                    notIgnorePatterns.add(getIgnorePattern(ignoreLine));
                 } else {
-                    ignorePatterns.add(getIgnorePattern(line));
+                    ignorePatterns.add(getIgnorePattern(ignoreLine));
                 }
             }
         } catch (IOException e) {
-            throw new RuntimeException("Failed to read the ignore file: " + ignoreFile, e);
+            throw new RuntimeException("Failed to read the ignore file: " + ignore, e);
         }
     }
 
@@ -57,7 +60,7 @@ public class FileIgnore {
         if (ignoreLine.startsWith("!")) {
             ignoreLine = ignoreLine.substring(1);
         }
-        ignoreLine = ".*" + ignoreLine.replace("*", ".*");
+        ignoreLine = ".*" + ignoreLine.replace("*", ".*") + ".*";
         return Pattern.compile(ignoreLine);
     }
 }
