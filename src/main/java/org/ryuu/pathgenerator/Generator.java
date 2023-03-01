@@ -81,6 +81,11 @@ public class Generator {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+
+        if (classBuilder.typeSpecs.size() == 0 && classBuilder.fieldSpecs.size() == 0) {
+            return null;
+        }
+
         return classBuilder.build();
     }
 
