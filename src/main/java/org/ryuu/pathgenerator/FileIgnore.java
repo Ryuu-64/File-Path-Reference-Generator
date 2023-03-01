@@ -12,6 +12,20 @@ import java.util.regex.Pattern;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
+/**
+ * NAME<p>
+ * fileignore - Specifies intentionally untracked files to ignore
+ * DESCRIPTION<p>
+ * Each line in a gitignore file specifies a pattern.
+ * PATTERN FORMAT<p>
+ * A blank line matches no files, so it can serve as a separator for readability.<p>
+ * A line starting with # serves as a comment.<p>
+ * The slash / is used as the directory separator.<br>
+ * Separators may occur at the beginning, middle or end of the .fileignore search pattern.<p>
+ * An asterisk "*" matches anything.<p>
+ * An optional prefix "!" which negates the pattern;<br>
+ * any matching file excluded by a previous pattern will become included again.<p>
+ */
 public class FileIgnore {
     public static final String FILE_NAME = ".fileignore";
     private final List<Pattern> ignorePatterns = new ArrayList<>();

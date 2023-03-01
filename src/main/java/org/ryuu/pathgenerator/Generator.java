@@ -54,20 +54,16 @@ public class Generator {
             return null;
         }
 
-        String identifier = IdentifierProcessor.getLegal(directoryPath.getFileName().toString());
-        TypeSpec.Builder classBuilder;
-        if (directoryPath != this.sourcePath) {
-            classBuilder = TypeSpec.classBuilder(identifier);
-        } else {
-            classBuilder = TypeSpec.classBuilder("$" + identifier);
-        }
-        classBuilder.addModifiers(PUBLIC, FINAL);
+        String identifier = IdentifierUtils.legal(directoryPath.getFileName().toString());
+        TypeSpec.Builder classBuilder = TypeSpec.classBuilder(identifier)
+                .addModifiers(PUBLIC, FINAL);
+        // top-level class cannot be declared as static
         if (directoryPath != this.sourcePath) {
             classBuilder.addModifiers(STATIC);
         }
         try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(directoryPath)) {
             for (Path innerPath : directoryStream) {
-                if (!fileIgnore.isIgnorePath(innerPath.toString().replace("\\", "/"))) {
+                if (!fileIgnore.isIgnorePath(PathUtils.toStringForwardSlash(innerPath))) {
                     classBuilder.addField(createField(innerPath));
                 }
 
@@ -82,6 +78,7 @@ public class Generator {
             throw new RuntimeException(e);
         }
 
+        // avoid generating empty class
         if (classBuilder.typeSpecs.size() == 0 && classBuilder.fieldSpecs.size() == 0) {
             return null;
         }
@@ -90,9 +87,11 @@ public class Generator {
     }
 
     private FieldSpec createField(Path path) {
-        String identifier = IdentifierProcessor.getLegal(path.getFileName().toString());
-        String pathString = path.normalize().toString().replaceAll("\\\\", "/");
+        String identifier = IdentifierUtils.legal(path.getFileName().toString());
+        String pathString = PathUtils.toStringForwardSlash(path);
         if (Files.isDirectory(path)) {
+            // the $ prefix needs to be added
+            // otherwise the field may conflict with the class
             identifier = "$" + identifier;
         }
         return FieldSpec

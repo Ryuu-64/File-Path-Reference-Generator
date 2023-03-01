@@ -3,14 +3,14 @@ package org.ryuu.pathgenerator;
 import javax.lang.model.SourceVersion;
 import java.util.regex.Pattern;
 
-public class IdentifierProcessor {
+public class IdentifierUtils {
     private static final Pattern illegalPrefixCharacter = Pattern.compile("^[^a-zA-Z_$].*$");
     private static final Pattern illegalCharacter = Pattern.compile("[^\\da-zA-Z_$]");
 
-    private IdentifierProcessor() {
+    private IdentifierUtils() {
     }
 
-    public static String getLegal(String identifier) {
+    public static String legal(String identifier) {
         if (SourceVersion.isKeyword(identifier)) {
             return "$" + identifier;
         }
