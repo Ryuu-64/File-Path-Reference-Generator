@@ -37,8 +37,6 @@ public class FileIgnore {
     public FileIgnore(Path ignore) {
         Objects.requireNonNull(ignore, "The ignore file path cannot be null.");
 
-        ignore = ignore.toAbsolutePath().normalize();
-
         if (!Files.exists(ignore)) {
             throw new IllegalArgumentException("The ignore file does not exist: " + ignore);
         }

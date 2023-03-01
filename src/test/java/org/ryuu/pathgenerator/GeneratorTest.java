@@ -11,12 +11,12 @@ class GeneratorTest {
     void folderIgnore() {
         new Generator().generate(
                 Paths.get("./src/test/resources/folderIgnore"),
-                Paths.get("./src/test/java/org/ryuu/pathgenerator/test/"),
+                Paths.get("./src/test/java/org/ryuu/pathgenerator/test"),
                 "org.ryuu.pathgenerator.test"
         );
 
         try {
-            Class<?> klass = Class.forName("org.ryuu.pathgenerator.test.$folderIgnore");
+            Class<?> klass = Class.forName("org.ryuu.pathgenerator.test.folderIgnore");
             assertEquals(klass.getDeclaredClasses().length, 1);
             assertEquals(klass.getDeclaredFields().length, 0);
         } catch (ClassNotFoundException e) {
@@ -33,7 +33,7 @@ class GeneratorTest {
         );
 
         try {
-            Class<?> klass = Class.forName("org.ryuu.pathgenerator.test.$filesInFolderIgnore");
+            Class<?> klass = Class.forName("org.ryuu.pathgenerator.test.filesInFolderIgnore");
             assertEquals(klass.getDeclaredClasses().length, 0);
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);

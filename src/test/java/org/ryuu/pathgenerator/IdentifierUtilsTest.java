@@ -2,7 +2,6 @@ package org.ryuu.pathgenerator;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.ryuu.pathgenerator.test.$filesInFolderIgnore;
 
 import javax.lang.model.SourceVersion;
 import java.util.HashSet;

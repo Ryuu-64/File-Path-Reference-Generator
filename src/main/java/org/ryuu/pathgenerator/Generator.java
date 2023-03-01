@@ -37,7 +37,7 @@ public class Generator {
         }
 
         JavaFile javaFile = JavaFile.builder(packageName, klass).build();
-        Path targetFilePath = Paths.get(targetFolder.toString() + "/$" + sourceFolder.getFileName() + ".java");
+        Path targetFilePath = Paths.get(targetFolder.toString() + "/" + sourceFolder.getFileName() + ".java");
         try {
             FileUtils.writeStringToFile(
                     targetFilePath.toFile(),
