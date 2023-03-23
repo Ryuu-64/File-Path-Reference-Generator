@@ -1,4 +1,4 @@
-package org.ryuu.pathgenerator.test;
+package org.ryuu.pathgenerator.generated;
 
 import java.lang.String;
 

@@ -37,12 +37,15 @@ public class Generator {
         }
 
         JavaFile javaFile = JavaFile.builder(packageName, klass).build();
-        Path targetFilePath = Paths.get(targetFolder.toString() + "/" + sourceFolder.getFileName() + ".java");
+        Path targetFilePath = Paths.get(
+                targetFolder.toString() + "/" +
+                IdentifierUtils.legal(sourceFolder.getFileName().toString()) + ".java"
+        );
         try {
             FileUtils.writeStringToFile(
                     targetFilePath.toFile(),
-                    javaFile.toString()
-                    , UTF_8
+                    javaFile.toString(),
+                    UTF_8
             );
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -55,8 +58,7 @@ public class Generator {
         }
 
         String identifier = IdentifierUtils.legal(directoryPath.getFileName().toString());
-        TypeSpec.Builder classBuilder = TypeSpec.classBuilder(identifier)
-                .addModifiers(PUBLIC, FINAL);
+        TypeSpec.Builder classBuilder = TypeSpec.classBuilder(identifier).addModifiers(PUBLIC, FINAL);
         // top-level class cannot be declared as static
         if (directoryPath != this.sourcePath) {
             classBuilder.addModifiers(STATIC);
