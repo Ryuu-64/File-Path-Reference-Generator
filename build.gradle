@@ -3,7 +3,12 @@ plugins {
 }
 
 group 'org.ryuu'
-version '0.1.4'
+version '1.0.0'
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}
 
 repositories {
     mavenCentral()
@@ -15,33 +20,15 @@ dependencies {
     implementation group: 'com.squareup', name: 'javapoet', version: '1.13.0'
     // https://mvnrepository.com/artifact/commons-io/commons-io
     implementation group: 'commons-io', name: 'commons-io', version: '2.11.0'
+
     implementation 'com.github.Ryuu-64:Functional:1.0.1'
+
     // https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-api
-    testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.9.0'
+    testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.9.2'
     // https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-engine
-    testRuntimeOnly group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: '5.9.0'
+    testRuntimeOnly group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: '5.9.2'
 }
 
 test {
     useJUnitPlatform()
-}
-
-java {
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
-}
-
-configurations {
-    implementation.canBeResolved(true)
-}
-
-jar {
-    manifestContentCharset 'utf-8'
-    metadataCharset 'utf-8'
-    manifest {
-        attributes 'Main-Class': 'org.ryuu.filepathreferencegenerator.gui.GUI'
-    }
-    from {
-        configurations.implementation.collect { file -> file.isDirectory() ? file : zipTree(file) }
-    }
 }
